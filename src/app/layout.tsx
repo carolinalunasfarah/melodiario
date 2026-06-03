@@ -1,20 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "@/src/modules/styles/globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const interFont = Inter({
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Melodiario",
-  description: "Tu dosis diaria de música",
+  title: {
+    template: "%s / Melodiario",
+    default: "Tu dosis diaria de música / Melodiario",
+  },
+  description:
+    "Un espacio íntimo para llevar un diario musical y de emociones.",
 };
 
 export default function RootLayout({
@@ -23,10 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
+    <html lang="es" className={`${interFont.className} h-full antialiased`}>
       <body className="flex min-h-screen flex-col bg-brand-background font-sans text-brand-text">
         {children}
       </body>

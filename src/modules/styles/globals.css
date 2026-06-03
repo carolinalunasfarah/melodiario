@@ -6,7 +6,7 @@
   --color-brand-text: #f5f2ff;
   --color-brand-accent: #a78bfa;
 
-  --color-mood-sparkling: #fbbf24;
+  --color-mood-happy: #fbbf24;
   --color-mood-chill: #34d399;
   --color-mood-melancholic: #818cf8;
   --color-mood-inspired: #f472b6;
@@ -14,4 +14,10 @@
 
   --color-system-error: #6b1d1d;
   --color-system-success: #064e3b;
+}
+
+@layer base {
+  html {
+    cursor: default;
+  }
 }
