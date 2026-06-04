@@ -6,3 +6,7 @@ export type AvatarItem = {
   backgroundColor: string;
   delay: number;
 };
+
+export type HowItWorksSectionProps = {
+  open: boolean;
+};

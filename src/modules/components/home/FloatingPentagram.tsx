@@ -8,6 +8,7 @@ import Microphone from "@/src/modules/components/avatars/Microphone";
 import Speaker from "@/src/modules/components/avatars/Speaker";
 import Turntable from "@/src/modules/components/avatars/Turntable";
 import { AvatarItem } from "./types";
+import { RING_RADIUS, AVATAR_SIZE } from "./constants";
 
 const RING_AVATARS: AvatarItem[] = [
   {
@@ -41,9 +42,6 @@ const RING_AVATARS: AvatarItem[] = [
     delay: 2,
   },
 ];
-
-const RING_RADIUS = 118;
-const AVATAR_SIZE = 60;
 
 function floatAnimation(delay: number): {
   animate: { y: number[] };
