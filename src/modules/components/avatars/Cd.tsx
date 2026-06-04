@@ -4,18 +4,13 @@ import {
   avatarIconClass,
   avatarStrokeClass,
 } from "./avatarStyles";
-
-export type CdProps = {
-  backgroundColor?: string;
-  size?: number;
-  className?: string;
-};
+import { AvatarProps } from "./types";
 
 const Cd = ({
   backgroundColor = "var(--color-brand-accent)",
   size = 64,
   className,
-}: CdProps) => (
+}: AvatarProps) => (
   <div
     className={cn(avatarContainerClass, className)}
     style={{ width: size, height: size, backgroundColor }}

@@ -4,18 +4,13 @@ import {
   avatarIconClass,
   avatarStrokeClass,
 } from "./avatarStyles";
-
-export type SpeakerProps = {
-  backgroundColor?: string;
-  size?: number;
-  className?: string;
-};
+import { AvatarProps } from "./types";
 
 const Speaker = ({
   backgroundColor = "var(--color-brand-accent)",
   size = 64,
   className,
-}: SpeakerProps) => (
+}: AvatarProps) => (
   <div
     className={cn(avatarContainerClass, className)}
     style={{ width: size, height: size, backgroundColor }}
