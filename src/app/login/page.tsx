@@ -13,6 +13,12 @@ export default function LoginPage() {
       >
         Volver al inicio
       </Link>
+      <Link
+        href="/dashboard"
+        className="text-sm font-medium text-brand-accent underline-offset-4 hover:underline"
+      >
+        Ir a dashboard
+      </Link>
     </main>
   );
 }

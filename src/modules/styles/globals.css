@@ -19,6 +19,5 @@
 @layer base {
   html {
     cursor: default;
-    scroll-behavior: smooth;
   }
 }
