@@ -40,12 +40,17 @@ const MOCK_SONGS = [
 ] as const;
 
 export const MOCK_SPOTIFY_TRACKS: SpotifyTrackSelection[] = MOCK_SONGS.map(
-  (song, index) => ({
-    spotify_track_id: `mock-spotify-track-${index + 1}`,
-    song_title: song.title,
-    song_artist: song.artist,
-    song_album_cover: MOCK_COVERS[index],
-  }),
+  (song, index) => {
+    const trackId = `mock-spotify-track-${index + 1}`;
+
+    return {
+      spotify_track_id: trackId,
+      spotify_song_title: song.title,
+      spotify_song_artist: song.artist,
+      spotify_song_album_cover: MOCK_COVERS[index],
+      spotify_external_url: `https://open.spotify.com/track/${index + 1}`,
+    };
+  },
 );
 
 const MOCK_COMMENTS = [
@@ -69,9 +74,10 @@ function buildMockEntry(dateKey: string, index: number): DiaryEntry {
     date: dateKey,
     mood: MOODS[index % MOODS.length],
     spotify_track_id: track.spotify_track_id,
-    song_title: track.song_title,
-    song_artist: track.song_artist,
-    song_album_cover: track.song_album_cover,
+    spotify_song_title: track.spotify_song_title,
+    spotify_song_artist: track.spotify_song_artist,
+    spotify_song_album_cover: track.spotify_song_album_cover,
+    spotify_external_url: track.spotify_external_url,
     ...(comment ? { comment } : {}),
   };
 }
@@ -110,7 +116,7 @@ export function getMockDiaryEntry(date: Date): DiaryEntry | null {
 }
 
 export function getMockCoverForDate(date: Date): string | undefined {
-  return getMockDiaryEntry(date)?.song_album_cover;
+  return getMockDiaryEntry(date)?.spotify_song_album_cover;
 }
 
 /** Temporary mock until Spotify search is wired. */
@@ -122,7 +128,7 @@ export function searchMockSpotifyTracks(
 
   return MOCK_SPOTIFY_TRACKS.filter(
     (track) =>
-      track.song_title.toLowerCase().includes(normalized) ||
-      track.song_artist.toLowerCase().includes(normalized),
+      track.spotify_song_title.toLowerCase().includes(normalized) ||
+      track.spotify_song_artist.toLowerCase().includes(normalized),
   ).slice(0, 5);
 }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { isPast, isToday } from "date-fns";
+import Image from "next/image";
 import { Button } from "@/src/modules/components/ui/Button";
 import {
   toDateKey,
@@ -14,6 +15,48 @@ import type {
   SpotifyTrackSelection,
 } from "./types";
 import MoodBadge from "./DiaryMoodBadge";
+import Link from "next/link";
+
+type SpotifyFormFields = Pick<
+  SpotifyTrackSelection,
+  | "spotify_track_id"
+  | "spotify_song_title"
+  | "spotify_song_artist"
+  | "spotify_song_album_cover"
+  | "spotify_external_url"
+>;
+
+function SpotifyHiddenInputs({ track }: { track: SpotifyFormFields }) {
+  return (
+    <>
+      <input
+        type="hidden"
+        name="spotify_track_id"
+        value={track.spotify_track_id}
+      />
+      <input
+        type="hidden"
+        name="spotify_song_title"
+        value={track.spotify_song_title}
+      />
+      <input
+        type="hidden"
+        name="spotify_song_artist"
+        value={track.spotify_song_artist}
+      />
+      <input
+        type="hidden"
+        name="spotify_song_album_cover"
+        value={track.spotify_song_album_cover}
+      />
+      <input
+        type="hidden"
+        name="spotify_external_url"
+        value={track.spotify_external_url}
+      />
+    </>
+  );
+}
 
 function DiaryEntryForm({ selectedDate, entry }: DiarySectionProps) {
   const [editingJournal, setEditingJournal] = useState(false);
@@ -29,7 +72,11 @@ function DiaryEntryForm({ selectedDate, entry }: DiarySectionProps) {
   const journalEditable = canCreate || editingJournal;
   const trackResults = canCreate ? searchMockSpotifyTracks(songQuery) : [];
   const albumCover =
-    entry?.song_album_cover ?? selectedTrack?.song_album_cover ?? null;
+    entry?.spotify_song_album_cover ??
+    selectedTrack?.spotify_song_album_cover ??
+    null;
+  const spotifyExternalUrl =
+    entry?.spotify_external_url ?? selectedTrack?.spotify_external_url ?? null;
 
   function handleSongQueryChange(value: string) {
     setSongQuery(value);
@@ -38,7 +85,7 @@ function DiaryEntryForm({ selectedDate, entry }: DiarySectionProps) {
 
   function handleTrackSelect(track: SpotifyTrackSelection) {
     setSelectedTrack(track);
-    setSongQuery(`${track.song_title} — ${track.song_artist}`);
+    setSongQuery(`${track.spotify_song_title} — ${track.spotify_song_artist}`);
   }
 
   return (
@@ -49,61 +96,11 @@ function DiaryEntryForm({ selectedDate, entry }: DiarySectionProps) {
       <input type="hidden" name="date" value={toDateKey(selectedDate)} />
       {entry ? (
         <>
-          <input
-            type="hidden"
-            name="spotify_track_id"
-            id="spotify_track_id"
-            value={entry.spotify_track_id}
-          />
-          <input
-            type="hidden"
-            name="song_title"
-            id="song_title"
-            value={entry.song_title}
-          />
-          <input
-            type="hidden"
-            name="song_artist"
-            id="song_artist"
-            value={entry.song_artist}
-          />
-          <input
-            type="hidden"
-            name="song_album_cover"
-            id="song_album_cover"
-            value={entry.song_album_cover}
-          />
+          <SpotifyHiddenInputs track={entry} />
           <input type="hidden" name="mood" value={entry.mood} />
         </>
       ) : (
-        selectedTrack && (
-          <>
-            <input
-              type="hidden"
-              name="spotify_track_id"
-              id="spotify_track_id"
-              value={selectedTrack.spotify_track_id}
-            />
-            <input
-              type="hidden"
-              name="song_title"
-              id="song_title"
-              value={selectedTrack.song_title}
-            />
-            <input
-              type="hidden"
-              name="song_artist"
-              id="song_artist"
-              value={selectedTrack.song_artist}
-            />
-            <input
-              type="hidden"
-              name="song_album_cover"
-              id="song_album_cover"
-              value={selectedTrack.song_album_cover}
-            />
-          </>
-        )
+        selectedTrack && <SpotifyHiddenInputs track={selectedTrack} />
       )}
       {canCreate && mood && <input type="hidden" name="mood" value={mood} />}
 
@@ -116,15 +113,25 @@ function DiaryEntryForm({ selectedDate, entry }: DiarySectionProps) {
         </label>
         {canCreate ? (
           <>
-            <input
-              id="song-search"
-              type="search"
-              value={songQuery}
-              onChange={(event) => handleSongQueryChange(event.target.value)}
-              placeholder="Buscar en Spotify..."
-              autoComplete="off"
-              className="w-full rounded-xl border border-brand-accent/20 bg-brand-background/40 px-3 py-2.5 text-sm text-brand-text placeholder:text-brand-text/40 focus:border-brand-accent focus:outline-none"
-            />
+            <div className="relative">
+              <input
+                id="song-search"
+                type="search"
+                value={songQuery}
+                onChange={(event) => handleSongQueryChange(event.target.value)}
+                placeholder="Buscar en Spotify..."
+                autoComplete="off"
+                className="w-full rounded-xl border border-brand-accent/20 bg-brand-background/40 py-2.5 pr-11 pl-3 text-sm text-brand-text placeholder:text-brand-text/40 focus:border-brand-accent focus:outline-none"
+              />
+              <Image
+                src="/spotify_white_logo.svg"
+                alt="Spotify logo"
+                width={21}
+                height={21}
+                aria-hidden
+                className="absolute top-1/2 right-3 min-h-[21px] min-w-[21px] -translate-y-1/2"
+              />
+            </div>
             {trackResults.length > 0 && !selectedTrack ? (
               <ul
                 className="overflow-hidden rounded-xl border border-brand-accent/20 bg-brand-background/60"
@@ -143,16 +150,16 @@ function DiaryEntryForm({ selectedDate, entry }: DiarySectionProps) {
                       <span
                         className="size-10 shrink-0 rounded-lg border border-brand-accent/20 bg-brand-background/40 bg-cover bg-center"
                         style={{
-                          backgroundImage: `url("${track.song_album_cover}")`,
+                          backgroundImage: `url("${track.spotify_song_album_cover}")`,
                         }}
                         aria-hidden
                       />
                       <span>
                         <span className="block font-medium">
-                          {track.song_title}
+                          {track.spotify_song_title}
                         </span>
                         <span className="block text-brand-text">
-                          {track.song_artist}
+                          {track.spotify_song_artist}
                         </span>
                       </span>
                     </button>
@@ -163,26 +170,40 @@ function DiaryEntryForm({ selectedDate, entry }: DiarySectionProps) {
           </>
         ) : (
           <p className="text-sm font-medium text-brand-text">
-            {entry?.song_title ?? "Ninguna canción registrada"}
-            {entry?.song_artist ? (
+            {entry?.spotify_song_title ?? "Ninguna canción registrada"}
+            {entry?.spotify_song_artist ? (
               <>
                 {" "}
                 —{" "}
-                <span className="text-brand-text/80">{entry.song_artist}</span>
+                <span className="text-brand-text/80">
+                  {entry.spotify_song_artist}
+                </span>
               </>
             ) : null}
           </p>
         )}
       </div>
 
-      <div className="flex justify-center">
+      <div className="flex flex-col items-center gap-2">
         {albumCover ? (
-          <div
-            className="aspect-square w-full max-w-[200px] rounded-2xl border border-brand-accent/20 bg-brand-background/40 bg-cover bg-center shadow-lg"
-            style={{ backgroundImage: `url("${albumCover}")` }}
-            role="img"
-            aria-label={`Carátula de ${entry?.song_title ?? selectedTrack?.song_title ?? "la canción"}`}
-          />
+          <>
+            <div
+              className="aspect-square w-full max-w-[200px] rounded-2xl border border-brand-accent/20 bg-brand-background/40 bg-cover bg-center shadow-lg"
+              style={{ backgroundImage: `url("${albumCover}")` }}
+              role="img"
+              aria-label={`Carátula de ${entry?.spotify_song_title ?? selectedTrack?.spotify_song_title ?? "la canción"}`}
+            />
+            {spotifyExternalUrl ? (
+              <Link
+                href={spotifyExternalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm font-medium text-brand-accent underline-offset-4 hover:underline"
+              >
+                Escuchar en Spotify
+              </Link>
+            ) : null}
+          </>
         ) : (
           <div className="flex aspect-square w-full max-w-[200px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-brand-accent/20 bg-brand-background/20 p-4 text-center">
             <span className="mb-1 text-2xl" aria-hidden>

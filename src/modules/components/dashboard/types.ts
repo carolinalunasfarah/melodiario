@@ -8,9 +8,10 @@ export type MoodToken =
 /** Shape returned by Spotify search before saving. */
 export type SpotifyTrackSelection = {
   spotify_track_id: string;
-  song_title: string;
-  song_artist: string;
-  song_album_cover: string;
+  spotify_song_title: string;
+  spotify_song_artist: string;
+  spotify_song_album_cover: string;
+  spotify_external_url: string;
 };
 
 /** Matches `diary_entries` (without `user_id`, set server-side). */
@@ -19,9 +20,10 @@ export type DiaryEntry = {
   mood: MoodToken;
   comment?: string;
   spotify_track_id: string;
-  song_title: string;
-  song_artist: string;
-  song_album_cover: string;
+  spotify_song_title: string;
+  spotify_song_artist: string;
+  spotify_song_album_cover: string;
+  spotify_external_url: string;
 };
 
 export type DiarySectionProps = {
