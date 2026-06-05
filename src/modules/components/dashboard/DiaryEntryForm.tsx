@@ -2,90 +2,50 @@
 
 import { useState } from "react";
 import { isPast, isToday } from "date-fns";
-import Image from "next/image";
 import { Button } from "@/src/modules/components/ui/Button";
+import { toDateKey } from "@/src/modules/lib/utils/toDateKey";
+import type { SpotifyTrack } from "@/src/modules/lib/spotify/types";
 import {
-  toDateKey,
-  searchMockSpotifyTracks,
-} from "@/src/modules/data/mockDiaryEntries";
+  diaryFieldsFromTrack,
+  formatTrackArtists,
+  getTrackAlbumCover,
+} from "@/src/modules/lib/spotify/utils";
 import { JOURNAL_MAX_LENGTH, MOOD_OPTIONS } from "./constants";
-import type {
-  DiarySectionProps,
-  MoodToken,
-  SpotifyTrackSelection,
-} from "./types";
+import type { DiarySectionProps, MoodToken } from "./types";
+import DiaryAlbumCover from "./DiaryAlbumCover";
+import DiarySpotifyHiddenInputs from "./DiarySpotifyHiddenInputs";
+import DiarySpotifySearch from "./DiarySpotifySearch";
 import MoodBadge from "./DiaryMoodBadge";
-import Link from "next/link";
 
-type SpotifyFormFields = Pick<
-  SpotifyTrackSelection,
-  | "spotify_track_id"
-  | "spotify_song_title"
-  | "spotify_song_artist"
-  | "spotify_song_album_cover"
-  | "spotify_external_url"
->;
-
-function SpotifyHiddenInputs({ track }: { track: SpotifyFormFields }) {
-  return (
-    <>
-      <input
-        type="hidden"
-        name="spotify_track_id"
-        value={track.spotify_track_id}
-      />
-      <input
-        type="hidden"
-        name="spotify_song_title"
-        value={track.spotify_song_title}
-      />
-      <input
-        type="hidden"
-        name="spotify_song_artist"
-        value={track.spotify_song_artist}
-      />
-      <input
-        type="hidden"
-        name="spotify_song_album_cover"
-        value={track.spotify_song_album_cover}
-      />
-      <input
-        type="hidden"
-        name="spotify_external_url"
-        value={track.spotify_external_url}
-      />
-    </>
-  );
-}
-
-function DiaryEntryForm({ selectedDate, entry }: DiarySectionProps) {
+export default function DiaryEntryForm({
+  selectedDate,
+  entry,
+}: DiarySectionProps) {
   const [editingJournal, setEditingJournal] = useState(false);
   const [songQuery, setSongQuery] = useState("");
-  const [selectedTrack, setSelectedTrack] =
-    useState<SpotifyTrackSelection | null>(null);
+  const [selectedTrack, setSelectedTrack] = useState<SpotifyTrack | null>(null);
   const [mood, setMood] = useState<MoodToken | null>(null);
   const [comment, setComment] = useState(entry?.comment ?? "");
 
-  const today = isToday(selectedDate);
-  const canCreate = today && !entry;
+  const canCreate = isToday(selectedDate) && !entry;
   const activeMood = entry?.mood ?? mood;
   const journalEditable = canCreate || editingJournal;
-  const trackResults = canCreate ? searchMockSpotifyTracks(songQuery) : [];
   const albumCover =
     entry?.spotify_song_album_cover ??
-    selectedTrack?.spotify_song_album_cover ??
-    null;
+    (selectedTrack ? getTrackAlbumCover(selectedTrack) : null);
   const spotifyExternalUrl =
-    entry?.spotify_external_url ?? selectedTrack?.spotify_external_url ?? null;
+    entry?.spotify_external_url ?? selectedTrack?.external_urls.spotify ?? null;
+  const songTitle =
+    entry?.spotify_song_title ?? selectedTrack?.name ?? "la canción";
 
   function handleSongQueryChange(value: string) {
     setSongQuery(value);
     setSelectedTrack(null);
   }
 
-  function handleTrackSelect(track: SpotifyTrackSelection) {
+  function handleTrackSelect(track: SpotifyTrack) {
     setSelectedTrack(track);
-    setSongQuery(`${track.spotify_song_title} — ${track.spotify_song_artist}`);
+    setSongQuery(`${track.name} — ${formatTrackArtists(track)}`);
   }
 
   return (
@@ -96,13 +56,19 @@ function DiaryEntryForm({ selectedDate, entry }: DiarySectionProps) {
       <input type="hidden" name="date" value={toDateKey(selectedDate)} />
       {entry ? (
         <>
-          <SpotifyHiddenInputs track={entry} />
+          <DiarySpotifyHiddenInputs track={entry} />
           <input type="hidden" name="mood" value={entry.mood} />
         </>
       ) : (
-        selectedTrack && <SpotifyHiddenInputs track={selectedTrack} />
+        selectedTrack && (
+          <DiarySpotifyHiddenInputs
+            track={diaryFieldsFromTrack(selectedTrack)}
+          />
+        )
       )}
-      {canCreate && mood && <input type="hidden" name="mood" value={mood} />}
+      {canCreate && mood ? (
+        <input type="hidden" name="mood" value={mood} />
+      ) : null}
 
       <div className="flex flex-col gap-3">
         <label
@@ -112,62 +78,12 @@ function DiaryEntryForm({ selectedDate, entry }: DiarySectionProps) {
           Canción del día
         </label>
         {canCreate ? (
-          <>
-            <div className="relative">
-              <input
-                id="song-search"
-                type="search"
-                value={songQuery}
-                onChange={(event) => handleSongQueryChange(event.target.value)}
-                placeholder="Buscar en Spotify..."
-                autoComplete="off"
-                className="w-full rounded-xl border border-brand-accent/20 bg-brand-background/40 py-2.5 pr-11 pl-3 text-sm text-brand-text placeholder:text-brand-text/40 focus:border-brand-accent focus:outline-none"
-              />
-              <Image
-                src="/spotify_white_logo.svg"
-                alt="Spotify logo"
-                width={21}
-                height={21}
-                aria-hidden
-                className="absolute top-1/2 right-3 min-h-[21px] min-w-[21px] -translate-y-1/2"
-              />
-            </div>
-            {trackResults.length > 0 && !selectedTrack ? (
-              <ul
-                className="overflow-hidden rounded-xl border border-brand-accent/20 bg-brand-background/60"
-                role="listbox"
-                aria-label="Resultados de búsqueda"
-              >
-                {trackResults.map((track) => (
-                  <li key={track.spotify_track_id}>
-                    <button
-                      type="button"
-                      role="option"
-                      aria-selected={false}
-                      onClick={() => handleTrackSelect(track)}
-                      className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm text-brand-text transition-colors hover:bg-brand-accent/10"
-                    >
-                      <span
-                        className="size-10 shrink-0 rounded-lg border border-brand-accent/20 bg-brand-background/40 bg-cover bg-center"
-                        style={{
-                          backgroundImage: `url("${track.spotify_song_album_cover}")`,
-                        }}
-                        aria-hidden
-                      />
-                      <span>
-                        <span className="block font-medium">
-                          {track.spotify_song_title}
-                        </span>
-                        <span className="block text-brand-text">
-                          {track.spotify_song_artist}
-                        </span>
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : null}
-          </>
+          <DiarySpotifySearch
+            query={songQuery}
+            selectedTrack={selectedTrack}
+            onQueryChange={handleSongQueryChange}
+            onTrackSelect={handleTrackSelect}
+          />
         ) : (
           <p className="text-sm font-medium text-brand-text">
             {entry?.spotify_song_title ?? "Ninguna canción registrada"}
@@ -185,35 +101,11 @@ function DiaryEntryForm({ selectedDate, entry }: DiarySectionProps) {
       </div>
 
       <div className="flex flex-col items-center gap-2">
-        {albumCover ? (
-          <>
-            <div
-              className="aspect-square w-full max-w-[200px] rounded-2xl border border-brand-accent/20 bg-brand-background/40 bg-cover bg-center shadow-lg"
-              style={{ backgroundImage: `url("${albumCover}")` }}
-              role="img"
-              aria-label={`Carátula de ${entry?.spotify_song_title ?? selectedTrack?.spotify_song_title ?? "la canción"}`}
-            />
-            {spotifyExternalUrl ? (
-              <Link
-                href={spotifyExternalUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm font-medium text-brand-accent underline-offset-4 hover:underline"
-              >
-                Escuchar en Spotify
-              </Link>
-            ) : null}
-          </>
-        ) : (
-          <div className="flex aspect-square w-full max-w-[200px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-brand-accent/20 bg-brand-background/20 p-4 text-center">
-            <span className="mb-1 text-2xl" aria-hidden>
-              🎵
-            </span>
-            <p className="text-[11px] text-brand-text/50">
-              La carátula aparecerá aquí
-            </p>
-          </div>
-        )}
+        <DiaryAlbumCover
+          albumCover={albumCover}
+          title={songTitle}
+          spotifyExternalUrl={spotifyExternalUrl}
+        />
       </div>
 
       <div className="flex flex-col gap-3">
@@ -223,16 +115,18 @@ function DiaryEntryForm({ selectedDate, entry }: DiarySectionProps) {
             : "Elige una sintonía para tu día"}
         </p>
         <div className="flex flex-wrap gap-2">
-          {canCreate
-            ? MOOD_OPTIONS.map((option) => (
-                <MoodBadge
-                  key={option.id}
-                  moodId={option.id}
-                  selected={mood === option.id}
-                  onSelect={setMood}
-                />
-              ))
-            : activeMood && <MoodBadge moodId={activeMood} selected readOnly />}
+          {canCreate ? (
+            MOOD_OPTIONS.map((option) => (
+              <MoodBadge
+                key={option.id}
+                moodId={option.id}
+                selected={mood === option.id}
+                onSelect={setMood}
+              />
+            ))
+          ) : activeMood ? (
+            <MoodBadge moodId={activeMood} selected readOnly />
+          ) : null}
         </div>
       </div>
 
@@ -304,5 +198,3 @@ function DiaryEntryForm({ selectedDate, entry }: DiarySectionProps) {
     </form>
   );
 }
-
-export default DiaryEntryForm;

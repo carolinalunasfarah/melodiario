@@ -1,4 +1,5 @@
 import { cn } from "../../lib/cn";
+import { Button } from "../ui/Button";
 import { MOOD_OPTIONS } from "./constants";
 import { MoodToken } from "./types";
 
@@ -9,23 +10,29 @@ type MoodBadgeProps = {
   onSelect?: (moodId: MoodToken) => void;
 };
 
-function MoodBadge({ moodId, selected, readOnly, onSelect }: MoodBadgeProps) {
+export default function MoodBadge({
+  moodId,
+  selected,
+  readOnly,
+  onSelect,
+}: MoodBadgeProps) {
   const mood = MOOD_OPTIONS.find((option) => option.id === moodId);
   if (!mood) return null;
 
   if (readOnly && !selected) return null;
 
   return (
-    <button
-      type="button"
+    <Button
+      variant="ghost"
+      size="sm"
       disabled={readOnly}
       aria-pressed={selected}
       onClick={() => onSelect?.(moodId)}
       className={cn(
-        "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-all sm:text-sm",
+        "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition-all sm:text-sm bg-brand-background",
         selected
-          ? "border-brand-accent bg-brand-background/80 text-brand-text ring-2 ring-brand-accent"
-          : "border-brand-accent/20 bg-brand-background/40 text-brand-text/80 hover:border-brand-accent/40",
+          ? "border-brand-accent ring-2 ring-brand-accent font-bold"
+          : "border-brand-accent/50 text-brand-text/80",
         readOnly ? "cursor-default" : "cursor-pointer",
       )}
     >
@@ -34,8 +41,6 @@ function MoodBadge({ moodId, selected, readOnly, onSelect }: MoodBadgeProps) {
         aria-hidden
       />
       {mood.label}
-    </button>
+    </Button>
   );
 }
-
-export default MoodBadge;
