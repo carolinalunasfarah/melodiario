@@ -5,7 +5,7 @@ import { useState } from "react";
 import FloatingPentagram from "@/src/modules/components/home/FloatingPentagram";
 import HowItWorksSection from "@/src/modules/components/home/HowItWorksSection";
 import { Button, buttonVariants } from "@/src/modules/components/ui/Button";
-import { cn } from "@/src/modules/lib/cn";
+import { cn } from "@/src/modules/lib/utils/cn";
 
 export default function HomePageContent() {
   const [showHowItWorks, setShowHowItWorks] = useState(false);

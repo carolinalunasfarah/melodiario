@@ -1,4 +1,4 @@
-import { cn } from "../../lib/cn";
+import { cn } from "../../lib/utils/cn";
 import { Button } from "../ui/Button";
 import { MOOD_OPTIONS } from "./constants";
 import { MoodToken } from "./types";

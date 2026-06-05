@@ -3,7 +3,7 @@
 import { DayPicker } from "react-day-picker";
 import { es } from "react-day-picker/locale";
 import "@daypicker/react/style.css";
-import { cn } from "@/src/modules/lib/cn";
+import { cn } from "@/src/modules/lib/utils/cn";
 import CalendarMonthCaption from "./CalendarMonthCaption";
 
 export default function Calendar({
