@@ -70,7 +70,13 @@ function CalendarMonthCaption(props: MonthCaptionProps) {
   );
 }
 
-function Calendar() {
+function Calendar({
+  selected,
+  onSelect,
+}: {
+  selected?: Date;
+  onSelect?: (date: Date | undefined) => void;
+}) {
   return (
     <div>
       <DayPicker
@@ -79,6 +85,8 @@ function Calendar() {
         lang="es"
         hideNavigation
         mode="single"
+        selected={selected}
+        onSelect={onSelect}
         numberOfMonths={1}
         showOutsideDays
         className={cn(
