@@ -1,10 +1,10 @@
 "use client";
 
 import { isFuture, isToday } from "date-fns";
-import { toDateKey } from "@/src/modules/lib/utils/toDateKey";
+import { toDateKey } from "@/src/modules/utils/toDateKey";
 import { DiarySectionProps } from "./types";
 import DiaryEntryForm from "./DiaryEntryForm";
-import formatDiaryHeading from "@/src/modules/lib/utils/formatDiaryHeading";
+import formatDiaryHeading from "@/src/modules/utils/formatDiaryHeading";
 
 export default function DiarySection({
   selectedDate,

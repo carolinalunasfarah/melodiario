@@ -3,7 +3,7 @@ import {
   useDayPicker,
   type MonthCaptionProps,
 } from "react-day-picker";
-import { cn } from "../../lib/utils/cn";
+import { cn } from "../../utils/cn";
 import { Button } from "../ui/Button";
 
 const navButtonClassName =

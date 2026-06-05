@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { isPast, isToday } from "date-fns";
 import { Button } from "@/src/modules/components/ui/Button";
-import { toDateKey } from "@/src/modules/lib/utils/toDateKey";
+import { toDateKey } from "@/src/modules/utils/toDateKey";
 import type { SpotifyTrack } from "@/src/modules/lib/spotify/types";
 import {
   diaryFieldsFromTrack,

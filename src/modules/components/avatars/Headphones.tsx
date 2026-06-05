@@ -1,4 +1,4 @@
-import { cn } from "@/src/modules/lib/utils/cn";
+import { cn } from "@/src/modules/utils/cn";
 import {
   avatarContainerClass,
   avatarIconClass,

@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef } from "react";
 import { Card, CardContent, CardTitle } from "@/src/modules/components/ui/Card";
-import { cn } from "@/src/modules/lib/utils/cn";
+import { cn } from "@/src/modules/utils/cn";
 import { STEPS, STEP_MOOD_COLORS } from "./constants";
 import { HowItWorksSectionProps } from "./types";
 
