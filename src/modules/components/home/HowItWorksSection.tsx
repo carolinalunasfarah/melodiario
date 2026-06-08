@@ -2,7 +2,12 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef } from "react";
-import { Card, CardContent, CardTitle } from "@/src/modules/components/ui/Card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardTitle,
+} from "@/src/modules/components/ui/Card";
 import { cn } from "@/src/modules/utils/cn";
 import { STEPS, STEP_MOOD_COLORS } from "./constants";
 import { HowItWorksSectionProps } from "./types";
@@ -49,7 +54,7 @@ export default function HowItWorksSection({ open }: HowItWorksSectionProps) {
               ¿Cómo funciona?
             </motion.h2>
 
-            <ul className="grid grid-cols-1 gap-12 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4 lg:gap-8">
+            <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
               {STEPS.map((step, index) => (
                 <motion.li
                   key={step.title}
@@ -62,23 +67,19 @@ export default function HowItWorksSection({ open }: HowItWorksSectionProps) {
                     ease: [0.22, 1, 0.36, 1],
                   }}
                 >
-                  <Card className="relative h-full overflow-visible shadow-lg ring-0">
+                  <Card className="relative h-full overflow-visible shadow-lg shadow-gray-950/50 ring-0">
                     <span
                       className={cn(
-                        "absolute top-0 left-5 z-10 flex size-14 -translate-y-1/2 items-center justify-center rounded-full text-2xl font-bold text-brand-background shadow-md sm:left-6 sm:size-16 sm:text-3xl",
+                        "absolute top-0 left-5 z-10 flex size-14 -translate-y-1/2 items-center justify-center rounded-full text-2xl font-bold text-brand-background",
                         STEP_MOOD_COLORS[index],
                       )}
                       aria-hidden
                     >
                       {index + 1}
                     </span>
-                    <CardContent className="px-5 pt-8 pb-4 text-start sm:px-6">
-                      <CardTitle className="mb-3 text-base font-semibold sm:text-lg">
-                        {step.title}
-                      </CardTitle>
-                      <p className="text-sm leading-relaxed text-brand-text/90 sm:text-base">
-                        {step.description}
-                      </p>
+                    <CardContent className="pt-8 pb-4 text-start sm:px-6">
+                      <CardTitle className="mb-3">{step.title}</CardTitle>
+                      <CardDescription>{step.description}</CardDescription>
                     </CardContent>
                   </Card>
                 </motion.li>

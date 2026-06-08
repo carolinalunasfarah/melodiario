@@ -1,15 +1,15 @@
 import {
   Chevron,
   useDayPicker,
-  type MonthCaptionProps,
+  type MonthCaptionProps as NavigationProps,
 } from "react-day-picker";
 import { cn } from "../../utils/cn";
 import { Button } from "../ui/Button";
 
 const navButtonClassName =
-  "inline-flex size-10 shrink-0 items-center justify-center rounded-full fill-brand-accent transition-colors hover:bg-brand-accent/20 cursor-pointer disabled:pointer-events-none disabled:opacity-35";
+  "rounded-full fill-brand-accent hover:bg-brand-accent/20 disabled:opacity-35";
 
-export default function CalendarMonthCaption(props: MonthCaptionProps) {
+export default function CalendarNavigation(props: NavigationProps) {
   const { displayIndex, className, children, calendarMonth, ...divProps } =
     props;
   void calendarMonth;

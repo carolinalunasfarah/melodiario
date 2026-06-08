@@ -18,7 +18,7 @@ export default function DiarySection({
     : "No tienes ningún registro para este día";
 
   return (
-    <aside className="flex h-full w-full min-h-80 flex-col rounded-xl bg-brand-surface sm:min-h-0">
+    <aside className="flex flex-1 flex-col rounded-2xl bg-brand-surface sm:min-h-0">
       <header className="space-y-1 pt-4 pl-4 sm:pt-6 sm:pl-6">
         <p className="text-sm font-semibold tracking-wide text-brand-accent uppercase">
           Diario
@@ -35,7 +35,7 @@ export default function DiarySection({
             entry={entry}
           />
         ) : (
-          <p className="flex h-full w-full items-center justify-center text-sm text-brand-text/80">
+          <p className="flex h-full w-full items-center justify-center text-md text-brand-text/80">
             {emptyMessage}
           </p>
         )}

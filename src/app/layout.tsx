@@ -22,8 +22,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${interFont.className} h-full antialiased`}>
-      <body className="flex min-h-screen flex-col bg-brand-background font-sans text-brand-text">
-        {children}
+      <body className="flex flex-col min-h-screen bg-brand-background font-sans text-brand-text">
+        <main className="w-full">{children}</main>
       </body>
     </html>
   );

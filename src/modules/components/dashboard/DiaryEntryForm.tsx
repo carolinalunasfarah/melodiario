@@ -16,6 +16,8 @@ import DiaryAlbumCover from "./DiaryAlbumCover";
 import DiarySpotifyHiddenInputs from "./DiarySpotifyHiddenInputs";
 import DiarySpotifySearch from "./DiarySpotifySearch";
 import MoodBadge from "./DiaryMoodBadge";
+import { Textarea } from "@/src/modules/components/ui/Textarea";
+import { Label } from "@/src/modules/components/ui/Label";
 
 export default function DiaryEntryForm({
   selectedDate,
@@ -71,12 +73,7 @@ export default function DiaryEntryForm({
       ) : null}
 
       <div className="flex flex-col gap-3">
-        <label
-          htmlFor="song-search"
-          className="text-xs font-semibold tracking-wide text-brand-text/80 uppercase"
-        >
-          Canción del día
-        </label>
+        <Label htmlFor="song-search">Canción del día</Label>
         {canCreate ? (
           <DiarySpotifySearch
             query={songQuery}
@@ -131,22 +128,16 @@ export default function DiaryEntryForm({
       </div>
 
       <div className="flex flex-1 flex-col gap-3">
-        <label
-          htmlFor="comment"
-          className="text-xs font-semibold tracking-wide text-brand-text/80 uppercase"
-        >
-          Bitácora privada (opcional)
-        </label>
+        <Label htmlFor="comment">Bitácora privada (opcional)</Label>
         {journalEditable ? (
           <>
-            <textarea
+            <Textarea
               id="comment"
               name="comment"
               value={comment}
               maxLength={JOURNAL_MAX_LENGTH}
               onChange={(event) => setComment(event.target.value)}
               placeholder="Cuéntale a tu diario qué pasó hoy..."
-              className="min-h-24 w-full resize-none rounded-xl border border-brand-accent/20 bg-brand-background/40 px-3 py-2.5 text-sm text-brand-text placeholder:text-brand-text/40 focus:border-brand-accent focus:outline-none"
             />
             <p className="text-right text-xs text-brand-text/45">
               {comment.length}/{JOURNAL_MAX_LENGTH}

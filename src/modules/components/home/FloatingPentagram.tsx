@@ -1,47 +1,8 @@
 "use client";
 
 import { motion, type Transition } from "motion/react";
-import Cassette from "@/src/modules/components/avatars/Cassette";
-import Cd from "@/src/modules/components/avatars/Cd";
-import Headphones from "@/src/modules/components/avatars/Headphones";
-import Microphone from "@/src/modules/components/avatars/Microphone";
-import Speaker from "@/src/modules/components/avatars/Speaker";
-import Turntable from "@/src/modules/components/avatars/Turntable";
-import { AvatarItem } from "./types";
-import { RING_RADIUS, AVATAR_SIZE } from "./constants";
-
-const RING_AVATARS: AvatarItem[] = [
-  {
-    Component: Cassette,
-    backgroundColor: "var(--color-mood-happiness)",
-    delay: 0,
-  },
-  {
-    Component: Headphones,
-    backgroundColor: "var(--color-mood-sadness)",
-    delay: 0.4,
-  },
-  {
-    Component: Microphone,
-    backgroundColor: "var(--color-mood-surprise)",
-    delay: 0.8,
-  },
-  {
-    Component: Cd,
-    backgroundColor: "var(--color-mood-disgust)",
-    delay: 1.2,
-  },
-  {
-    Component: Speaker,
-    backgroundColor: "var(--color-mood-rage)",
-    delay: 1.6,
-  },
-  {
-    Component: Turntable,
-    backgroundColor: "var(--color-mood-anxiety)",
-    delay: 2,
-  },
-];
+import { cn } from "@/src/modules/utils/cn";
+import { AVATAR_SIZE, RING_AVATARS } from "./constants";
 
 function floatAnimation(delay: number): {
   animate: { y: number[] };
@@ -60,58 +21,25 @@ function floatAnimation(delay: number): {
 }
 
 export default function FloatingPentagram() {
-  const count = RING_AVATARS.length;
-  const slice = 360 / count;
-
   return (
     <div
-      className="relative mx-auto flex w-full max-w-md items-center justify-center py-4"
+      className="relative mx-auto flex max-w-md items-center justify-center py-4"
       aria-hidden
     >
-      <motion.div
-        className="pointer-events-none absolute inset-x-0 top-1/2 z-0 flex h-20 -translate-y-1/2 flex-col justify-between opacity-25 sm:h-24"
-        animate={{ y: [0, -6, 0], x: [0, 8, 0] }}
-        transition={{
-          duration: 12,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-      >
+      <div className="pointer-events-none absolute inset-x-0 top-1/2 z-0 flex -translate-y-1/2 flex-col gap-5 opacity-25 sm:gap-7">
         {Array.from({ length: 5 }, (_, i) => (
-          <motion.div
+          <div
             key={i}
-            className="h-px w-full bg-linear-to-r from-transparent via-brand-text to-transparent sm:h-0.5"
-            animate={{
-              x: ["-5%", "5%", "-5%"],
-              scaleY: [1, 1.35, 1],
-              opacity: [0.45, 0.9, 0.45],
-            }}
-            transition={{
-              duration: 5 + i * 1.2,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: i * 0.35,
-            }}
+            className="h-px w-full shrink-0 bg-linear-to-r from-brand-background via-brand-text to-brand-background sm:h-0.5"
           />
         ))}
-      </motion.div>
+      </div>
 
       <div className="relative z-10 size-72 sm:size-80">
-        {RING_AVATARS.map(({ Component, backgroundColor, delay }, index) => {
-          const angle = slice * index - 90;
-
-          return (
-            <div
-              key={index}
-              className="absolute inset-0"
-              style={{ transform: `rotate(${angle}deg)` }}
-            >
-              <div
-                className="absolute left-1/2 top-1/2"
-                style={{
-                  transform: `translate(-50%, -50%) translateY(-${RING_RADIUS}px) rotate(${-angle}deg)`,
-                }}
-              >
+        {RING_AVATARS.map(
+          ({ Component, backgroundColor, delay, ring, avatar }, index) => (
+            <div key={index} className={cn("absolute inset-0", ring)}>
+              <div className={cn("absolute left-1/2 top-1/2", avatar)}>
                 <motion.div {...floatAnimation(delay)}>
                   <Component
                     size={AVATAR_SIZE}
@@ -120,8 +48,8 @@ export default function FloatingPentagram() {
                 </motion.div>
               </div>
             </div>
-          );
-        })}
+          ),
+        )}
       </div>
     </div>
   );

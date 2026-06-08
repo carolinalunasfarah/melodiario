@@ -7,6 +7,7 @@ import {
   getTrackAlbumCover,
 } from "@/src/modules/lib/spotify/utils";
 import { useSpotifyTrackSearch } from "./hooks/useSpotifyTrackSearch";
+import { Input } from "@/src/modules/components/ui/Input";
 
 type DiarySpotifySearchProps = {
   query: string;
@@ -40,14 +41,14 @@ export default function DiarySpotifySearch({
   return (
     <>
       <div className="relative">
-        <input
+        <Input
           id="song-search"
           type="search"
           value={query}
           onChange={(event) => handleQueryChange(event.target.value)}
           placeholder="Buscar en Spotify..."
           autoComplete="off"
-          className="w-full rounded-xl border border-brand-accent/20 bg-brand-background/40 py-2.5 pr-11 pl-3 text-sm text-brand-text placeholder:text-brand-text/40 focus:border-brand-accent focus:outline-none"
+          className="pr-11"
         />
         <Image
           src="/spotify_white_logo.svg"
