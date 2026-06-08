@@ -4,16 +4,16 @@
   --color-brand-background: #0a051b;
   --color-brand-surface: #180f33;
   --color-brand-text: #f5f2ff;
-  --color-brand-accent: #a78bfa;
+  --color-brand-accent: #c4b5fd;
 
-  --color-mood-sparkling: #fbbf24;
-  --color-mood-chill: #34d399;
-  --color-mood-melancholic: #818cf8;
-  --color-mood-inspired: #f472b6;
-  --color-mood-rage: #f87171;
+  --color-mood-happiness: #fbbf24;
+  --color-mood-sadness: #a5b4fc;
 
-  --color-system-error: #6b1d1d;
-  --color-system-success: #064e3b;
+  --color-mood-surprise: #fdba74;
+  --color-mood-disgust: #d8b4fe;
+
+  --color-mood-rage: #fca5a5;
+  --color-mood-anxiety: #86efac;
 }
 
 @layer base {

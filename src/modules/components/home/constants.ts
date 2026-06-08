@@ -25,8 +25,8 @@ export const STEPS = [
 ] as const;
 
 export const STEP_MOOD_COLORS = [
-  "bg-mood-sparkling",
+  "bg-mood-happiness",
+  "bg-mood-surprise",
+  "bg-mood-anxiety",
   "bg-mood-rage",
-  "bg-mood-chill",
-  "bg-mood-inspired",
 ] as const;

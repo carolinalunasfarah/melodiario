@@ -5,15 +5,16 @@ export const MOOD_OPTIONS: {
   label: string;
   colorClass: string;
 }[] = [
-  { id: "sparkling", label: "Vibrante", colorClass: "bg-mood-sparkling" },
-  { id: "chill", label: "Relajante", colorClass: "bg-mood-chill" },
+  { id: "happiness", label: "Alegría", colorClass: "bg-mood-happiness" },
   {
-    id: "melancholic",
-    label: "Melancolía",
-    colorClass: "bg-mood-melancholic",
+    id: "sadness",
+    label: "Tristeza",
+    colorClass: "bg-mood-sadness",
   },
-  { id: "inspired", label: "Inspiración", colorClass: "bg-mood-inspired" },
+  { id: "surprise", label: "Sorpresa", colorClass: "bg-mood-surprise" },
+  { id: "disgust", label: "Disgusto", colorClass: "bg-mood-disgust" },
   { id: "rage", label: "Tensión", colorClass: "bg-mood-rage" },
+  { id: "anxiety", label: "Ansiedad", colorClass: "bg-mood-anxiety" },
 ];
 
 export const JOURNAL_MAX_LENGTH = 100;

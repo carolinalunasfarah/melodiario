@@ -1,9 +1,10 @@
 export type MoodToken =
-  | "sparkling"
-  | "chill"
-  | "melancholic"
-  | "inspired"
-  | "rage";
+  | "happiness"
+  | "sadness"
+  | "surprise"
+  | "disgust"
+  | "rage"
+  | "anxiety";
 
 export type DiaryEntry = {
   date: string;

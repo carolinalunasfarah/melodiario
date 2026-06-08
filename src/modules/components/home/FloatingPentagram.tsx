@@ -13,32 +13,32 @@ import { RING_RADIUS, AVATAR_SIZE } from "./constants";
 const RING_AVATARS: AvatarItem[] = [
   {
     Component: Cassette,
-    backgroundColor: "var(--color-mood-sparkling)",
+    backgroundColor: "var(--color-mood-happiness)",
     delay: 0,
   },
   {
     Component: Headphones,
-    backgroundColor: "var(--color-mood-melancholic)",
+    backgroundColor: "var(--color-mood-sadness)",
     delay: 0.4,
   },
   {
     Component: Microphone,
-    backgroundColor: "var(--color-mood-inspired)",
+    backgroundColor: "var(--color-mood-surprise)",
     delay: 0.8,
   },
   {
     Component: Cd,
-    backgroundColor: "var(--color-mood-chill)",
+    backgroundColor: "var(--color-mood-disgust)",
     delay: 1.2,
   },
   {
     Component: Speaker,
-    backgroundColor: "var(--color-brand-accent)",
+    backgroundColor: "var(--color-mood-rage)",
     delay: 1.6,
   },
   {
     Component: Turntable,
-    backgroundColor: "var(--color-mood-rage)",
+    backgroundColor: "var(--color-mood-anxiety)",
     delay: 2,
   },
 ];
