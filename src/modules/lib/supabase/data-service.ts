@@ -1,5 +1,5 @@
 import { supabase } from "./supabase";
-import { SupabaseUser } from "./types";
+import { CreateUserInput, SupabaseUser } from "./types";
 
 export async function getUserByEmail(
   email: string,
@@ -18,7 +18,7 @@ export async function getUserByEmail(
   return data;
 }
 
-export async function createUser(newUser: SupabaseUser) {
+export async function createUser(newUser: CreateUserInput) {
   const { data, error } = await supabase
     .from("users")
     .insert(newUser)

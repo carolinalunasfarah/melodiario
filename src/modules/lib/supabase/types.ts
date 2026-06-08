@@ -8,6 +8,8 @@ export type AvatarType =
   | "turntable";
 
 export type SupabaseUser = {
+  id: string;
+  created_at: string;
   name?: string | null;
   email?: string | null;
   avatar_source?: AvatarSource | null;
@@ -16,3 +18,5 @@ export type SupabaseUser = {
   avatar_external_url?: string | null;
   nickname?: string | null;
 };
+
+export type CreateUserInput = Omit<SupabaseUser, "id" | "created_at">;
