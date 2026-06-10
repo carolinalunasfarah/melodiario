@@ -39,7 +39,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       ) : null}
 
       <form action={signInWithGoogle} className="w-full max-w-sm">
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full font-semibold">
           <Image src="/google_logo.svg" alt="Google" width={40} height={40} />
           Continuar con Google
         </Button>
