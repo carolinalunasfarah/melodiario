@@ -1,7 +1,11 @@
 import NextAuth from "next-auth";
 import type { NextAuthConfig } from "next-auth";
-import { getUserByEmail, createUser } from "../supabase/data-service";
+import {
+  getUserByEmail,
+  createUser,
+} from "@/src/modules/lib/supabase/data-service";
 import { authProviders } from "./providers";
+import { getFirstName } from "@/src/modules/utils";
 
 export const authConfig = {
   providers: authProviders,
@@ -12,10 +16,11 @@ export const authConfig = {
     },
 
     async signIn({ user, account }) {
-      if (!user.email) return false;
+      const email = user.email?.trim().toLowerCase();
+      if (!email) return false;
 
       try {
-        const existingUser = await getUserByEmail(user.email);
+        const existingUser = await getUserByEmail(email);
 
         if (existingUser?.password_hash && account?.provider === "google") {
           return "/login?error=email-account";
@@ -23,9 +28,8 @@ export const authConfig = {
 
         if (!existingUser && account?.provider !== "credentials") {
           await createUser({
-            email: user.email,
-            name: user.name,
-            avatar_source: "google",
+            email,
+            name: getFirstName(user.name) ?? user.name ?? null,
             avatar_external_url: user.image ?? null,
           });
         }
@@ -37,7 +41,10 @@ export const authConfig = {
     },
 
     async session({ session }) {
-      const user = await getUserByEmail(session.user.email);
+      const email = session.user.email?.trim().toLowerCase();
+      if (!email) return session;
+
+      const user = await getUserByEmail(email);
       session.user.id = user?.id ?? "";
       return session;
     },

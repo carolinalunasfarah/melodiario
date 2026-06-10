@@ -1,6 +1,6 @@
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
-import { getUserByEmail } from "../supabase/data-service";
+import { getUserByEmail } from "@/src/modules/lib/supabase/data-service";
 import { verifyPassword } from "./password";
 
 export const authProviders = [
