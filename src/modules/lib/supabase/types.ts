@@ -1,4 +1,5 @@
 export type AvatarSource = "google" | "custom";
+
 export type AvatarType =
   | "cassette"
   | "cd"
@@ -20,4 +21,13 @@ export type SupabaseUser = {
   password_hash?: string | null;
 };
 
-export type CreateUserInput = Omit<SupabaseUser, "id" | "created_at">;
+export type WritableUserFields = Omit<SupabaseUser, "id" | "created_at">;
+
+export type ProfileUpdateInput = Pick<
+  WritableUserFields,
+  | "nickname"
+  | "avatar_source"
+  | "avatar_type"
+  | "avatar_color"
+  | "avatar_external_url"
+>;

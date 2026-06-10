@@ -87,15 +87,12 @@ export async function searchSpotifyTracks(
       market,
     });
 
-    const response = await fetch(
-      `${SPOTIFY_SEARCH_URL}?${params.toString()}`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        cache: "no-store",
+    const response = await fetch(`${SPOTIFY_SEARCH_URL}?${params.toString()}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
       },
-    );
+      cache: "no-store",
+    });
 
     if (!response.ok) {
       throw new Error(`Spotify search failed (${response.status}).`);

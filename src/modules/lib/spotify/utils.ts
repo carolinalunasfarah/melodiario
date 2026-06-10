@@ -1,5 +1,5 @@
-import type { DiaryEntry } from "@/src/modules/components/dashboard/types";
-import type { SpotifyTrack } from "./types";
+import type { DiaryEntry } from "@/src/modules/components/dashboard";
+import type { SpotifyTrack } from "@/src/modules/lib/spotify";
 
 export type DiarySpotifyFields = Pick<
   DiaryEntry,

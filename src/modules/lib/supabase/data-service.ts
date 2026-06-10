@@ -1,5 +1,5 @@
 import { supabase } from "./supabase";
-import { CreateUserInput, SupabaseUser } from "./types";
+import { ProfileUpdateInput, SupabaseUser, WritableUserFields } from "./types";
 
 export async function getUserByEmail(
   email: string,
@@ -12,13 +12,28 @@ export async function getUserByEmail(
 
   if (error) {
     console.error(error);
-    throw new Error("User could not be fetched");
+    throw new Error("No se encontró la cuenta por email.");
   }
 
   return data;
 }
 
-export async function createUser(newUser: CreateUserInput) {
+export async function getUserById(id: string): Promise<SupabaseUser | null> {
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error) {
+    console.error(error);
+    throw new Error("No se encontró la cuenta por ID.");
+  }
+
+  return data;
+}
+
+export async function createUser(newUser: WritableUserFields) {
   const { data, error } = await supabase
     .from("users")
     .insert(newUser)
@@ -27,8 +42,24 @@ export async function createUser(newUser: CreateUserInput) {
 
   if (error) {
     console.error(error);
-    throw new Error("User could not be created");
+    throw new Error("No se pudo crear la cuenta.");
   }
 
   return data;
+}
+
+export async function updateUserById(id: string, data: ProfileUpdateInput) {
+  const { data: updatedUser, error } = await supabase
+    .from("users")
+    .update(data)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error(error);
+    throw new Error("No se pudo actualizar la cuenta.");
+  }
+
+  return updatedUser;
 }
