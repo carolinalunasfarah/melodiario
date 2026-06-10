@@ -6,9 +6,7 @@ import {
   signInWithEmailAndPassword,
   type AuthFormState,
 } from "@/src/modules/lib/auth/actions";
-import { Button } from "../ui/Button";
-import { Input } from "../ui/Input";
-import { Label } from "../ui/Label";
+import { Button, Input, Label } from "@/src/modules/components/ui";
 
 const initialState: AuthFormState = {};
 

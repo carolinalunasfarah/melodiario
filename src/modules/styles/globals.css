@@ -14,6 +14,9 @@
 
   --color-mood-rage: #fca5a5;
   --color-mood-anxiety: #86efac;
+
+  --color-system-destructive: #ef4444;
+  --color-system-success: #22c55e;
 }
 
 @layer base {

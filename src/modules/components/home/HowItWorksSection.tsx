@@ -7,9 +7,9 @@ import {
   CardContent,
   CardDescription,
   CardTitle,
-} from "@/src/modules/components/ui/Card";
+} from "@/src/modules/components/ui";
 import { cn } from "@/src/modules/utils/cn";
-import { STEPS, STEP_MOOD_COLORS } from "./constants";
+import { STEPS, STEP_COLORS } from "./constants";
 import { HowItWorksSectionProps } from "./types";
 
 export default function HowItWorksSection({ open }: HowItWorksSectionProps) {
@@ -71,7 +71,7 @@ export default function HowItWorksSection({ open }: HowItWorksSectionProps) {
                     <span
                       className={cn(
                         "absolute top-0 left-5 z-10 flex size-14 -translate-y-1/2 items-center justify-center rounded-full text-2xl font-bold text-brand-background",
-                        STEP_MOOD_COLORS[index],
+                        STEP_COLORS[index],
                       )}
                       aria-hidden
                     >

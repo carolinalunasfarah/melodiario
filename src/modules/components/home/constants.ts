@@ -1,9 +1,11 @@
-import Cassette from "@/src/modules/components/avatars/Cassette";
-import Cd from "@/src/modules/components/avatars/Cd";
-import Headphones from "@/src/modules/components/avatars/Headphones";
-import Microphone from "@/src/modules/components/avatars/Microphone";
-import Speaker from "@/src/modules/components/avatars/Speaker";
-import Turntable from "@/src/modules/components/avatars/Turntable";
+import {
+  Cassette,
+  Cd,
+  Headphones,
+  Microphone,
+  Speaker,
+  Turntable,
+} from "@/src/modules/components/avatars";
 import type { RingAvatarItem } from "./types";
 
 export const RING_RADIUS = 118;
@@ -77,7 +79,7 @@ export const STEPS = [
   },
 ] as const;
 
-export const STEP_MOOD_COLORS = [
+export const STEP_COLORS = [
   "bg-mood-happiness",
   "bg-mood-surprise",
   "bg-mood-anxiety",

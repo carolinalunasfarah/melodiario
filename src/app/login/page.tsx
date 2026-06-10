@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { Button } from "@/src/modules/components/ui/Button";
-import LoginForm from "@/src/modules/components/login/LoginForm";
+import { Button } from "@/src/modules/components/ui";
+import { LoginForm } from "@/src/modules/components/login";
 import { signInWithGoogle } from "@/src/modules/lib/auth/actions";
 import { Metadata } from "next";
 import Image from "next/image";

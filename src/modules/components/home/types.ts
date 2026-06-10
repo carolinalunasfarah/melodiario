@@ -1,5 +1,5 @@
 import { ComponentType } from "react";
-import { AvatarProps } from "../avatars/types";
+import type { AvatarProps } from "@/src/modules/components/avatars";
 
 export type RingAvatarItem = {
   Component: ComponentType<AvatarProps>;
