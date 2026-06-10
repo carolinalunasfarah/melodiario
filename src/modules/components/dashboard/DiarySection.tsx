@@ -1,10 +1,11 @@
 "use client";
 
 import { isFuture, isToday } from "date-fns";
-import { toDateKey } from "@/src/modules/utils/toDateKey";
-import { DiarySectionProps } from "./types";
-import DiaryEntryForm from "./DiaryEntryForm";
-import formatDiaryHeading from "@/src/modules/utils/formatDiaryHeading";
+import { toDateKey, formatDateStringCapitalized } from "@/src/modules/utils";
+import {
+  DiaryEntryForm,
+  type DiarySectionProps,
+} from "@/src/modules/components/dashboard";
 
 export default function DiarySection({
   selectedDate,
@@ -24,7 +25,7 @@ export default function DiarySection({
           Diario
         </p>
         <h2 className="text-base font-semibold text-brand-text sm:text-lg">
-          {formatDiaryHeading(selectedDate)}
+          {formatDateStringCapitalized(selectedDate)}
         </h2>
       </header>
       <div className="flex min-h-0 flex-1 flex-col">

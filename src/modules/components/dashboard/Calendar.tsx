@@ -3,9 +3,11 @@
 import { DayPicker } from "react-day-picker";
 import { es } from "react-day-picker/locale";
 import "@daypicker/react/style.css";
-import { cn } from "@/src/modules/utils/cn";
-import CalendarNavigation from "./CalendarNavigation";
-import CalendarDayButton from "./CalendarDayButton";
+import { cn } from "@/src/modules/utils/styles";
+import {
+  CalendarNavigation,
+  CalendarDayButton,
+} from "@/src/modules/components/dashboard";
 
 export default function Calendar({
   selected,

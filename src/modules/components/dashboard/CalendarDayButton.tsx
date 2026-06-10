@@ -1,6 +1,8 @@
+"use client";
+
 import { Modifiers } from "@daypicker/react";
-import { cn } from "../../utils/cn";
-import { Button } from "../ui/Button";
+import { cn } from "@/src/modules/utils/styles";
+import { Button } from "@/src/modules/components/ui";
 
 export default function CalendarDayButton({
   children,

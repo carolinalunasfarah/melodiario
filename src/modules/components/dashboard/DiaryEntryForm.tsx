@@ -2,22 +2,22 @@
 
 import { useState } from "react";
 import { isPast, isToday } from "date-fns";
-import { Button } from "@/src/modules/components/ui/Button";
-import { toDateKey } from "@/src/modules/utils/toDateKey";
-import type { SpotifyTrack } from "@/src/modules/lib/spotify/types";
+import { toDateKey } from "@/src/modules/utils";
 import {
   diaryFieldsFromTrack,
   formatTrackArtists,
   getTrackAlbumCover,
 } from "@/src/modules/lib/spotify/utils";
+import type { SpotifyTrack } from "@/src/modules/lib/spotify/types";
 import { JOURNAL_MAX_LENGTH, MOOD_OPTIONS } from "./constants";
 import type { DiarySectionProps, MoodToken } from "./types";
-import DiaryAlbumCover from "./DiaryAlbumCover";
-import DiarySpotifyHiddenInputs from "./DiarySpotifyHiddenInputs";
-import DiarySpotifySearch from "./DiarySpotifySearch";
-import MoodBadge from "./DiaryMoodBadge";
-import { Textarea } from "@/src/modules/components/ui/Textarea";
-import { Label } from "@/src/modules/components/ui/Label";
+import {
+  DiarySpotifyHiddenInputs,
+  DiarySpotifySearch,
+  DiaryMoodBadge,
+  DiaryAlbumCover,
+} from "@/src/modules/components/dashboard";
+import { Button, Textarea, Label } from "@/src/modules/components/ui";
 
 export default function DiaryEntryForm({
   selectedDate,
@@ -114,7 +114,7 @@ export default function DiaryEntryForm({
         <div className="flex flex-wrap gap-2">
           {canCreate ? (
             MOOD_OPTIONS.map((option) => (
-              <MoodBadge
+              <DiaryMoodBadge
                 key={option.id}
                 moodId={option.id}
                 selected={mood === option.id}
@@ -122,7 +122,7 @@ export default function DiaryEntryForm({
               />
             ))
           ) : activeMood ? (
-            <MoodBadge moodId={activeMood} selected readOnly />
+            <DiaryMoodBadge moodId={activeMood} selected readOnly />
           ) : null}
         </div>
       </div>

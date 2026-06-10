@@ -1,21 +1,21 @@
-import { cn } from "../../utils/cn";
-import { Button } from "../ui/Button";
+import { cn } from "@/src/modules/utils/styles";
+import { Button } from "@/src/modules/components/ui/Button";
 import { MOOD_OPTIONS } from "./constants";
 import { MoodToken } from "./types";
 
-type MoodBadgeProps = {
+type DiaryMoodBadgeProps = {
   moodId: MoodToken;
   selected: boolean;
   readOnly?: boolean;
   onSelect?: (moodId: MoodToken) => void;
 };
 
-export default function MoodBadge({
+export default function DiaryMoodBadge({
   moodId,
   selected,
   readOnly,
   onSelect,
-}: MoodBadgeProps) {
+}: DiaryMoodBadgeProps) {
   const mood = MOOD_OPTIONS.find((option) => option.id === moodId);
   if (!mood) return null;
 

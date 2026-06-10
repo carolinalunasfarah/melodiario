@@ -1,11 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import type { SpotifyTrack } from "@/src/modules/lib/spotify/types";
 import {
   formatTrackArtists,
   getTrackAlbumCover,
 } from "@/src/modules/lib/spotify/utils";
+import type { SpotifyTrack } from "@/src/modules/lib/spotify/types";
 import { useSpotifyTrackSearch } from "./hooks/useSpotifyTrackSearch";
 import { Input } from "@/src/modules/components/ui/Input";
 
@@ -66,11 +66,7 @@ export default function DiarySpotifySearch({
         <p className="text-xs text-system-error/90">{searchError}</p>
       ) : null}
       {visibleResults.length > 0 ? (
-        <ul
-          className="overflow-hidden rounded-xl border border-brand-accent/20 bg-brand-background/60"
-          role="listbox"
-          aria-label="Resultados de búsqueda"
-        >
+        <ul className="overflow-hidden rounded-xl border border-brand-accent/20 bg-brand-background/60">
           {visibleResults.map((track) => {
             const albumCoverUrl = getTrackAlbumCover(track);
 
@@ -78,8 +74,6 @@ export default function DiarySpotifySearch({
               <li key={track.id}>
                 <button
                   type="button"
-                  role="option"
-                  aria-selected={false}
                   onClick={() => handleTrackSelect(track)}
                   className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm text-brand-text transition-colors hover:bg-brand-accent/10"
                 >

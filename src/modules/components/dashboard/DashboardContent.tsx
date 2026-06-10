@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Calendar from "@/src/modules/components/dashboard/Calendar";
-import DiarySection from "@/src/modules/components/dashboard/DiarySection";
+import { Calendar, DiarySection } from "@/src/modules/components/dashboard";
 
 export default function DashboardContent() {
   const [selectedDate, setSelectedDate] = useState(() => new Date());

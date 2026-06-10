@@ -1,10 +1,12 @@
+"use client";
+
 import {
   Chevron,
   useDayPicker,
   type MonthCaptionProps as NavigationProps,
 } from "react-day-picker";
-import { cn } from "../../utils/cn";
-import { Button } from "../ui/Button";
+import { cn } from "@/src/modules/utils/styles";
+import { Button } from "@/src/modules/components/ui";
 
 const navButtonClassName =
   "rounded-full fill-brand-accent hover:bg-brand-accent/20 disabled:opacity-35";
