@@ -3,6 +3,7 @@ import { Button } from "@/src/modules/components/ui/Button";
 import LoginForm from "@/src/modules/components/login/LoginForm";
 import { signInWithGoogle } from "@/src/modules/lib/auth/actions";
 import { Metadata } from "next";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Iniciar sesión",
@@ -32,16 +33,23 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       </div>
 
       {pageError ? (
-        <p className="max-w-sm text-center text-sm text-mood-rage">{pageError}</p>
+        <p className="max-w-sm text-center text-sm text-mood-rage">
+          {pageError}
+        </p>
       ) : null}
 
-      <form action={signInWithGoogle}>
-        <Button type="submit" variant="outline" className="min-w-52">
+      <form action={signInWithGoogle} className="w-full max-w-sm">
+        <Button type="submit" className="w-full">
+          <Image src="/google_logo.svg" alt="Google" width={40} height={40} />
           Continuar con Google
         </Button>
       </form>
 
-      <span className="text-center text-brand-text/75">o</span>
+      <div className="flex w-full max-w-sm items-center gap-3">
+        <span className="h-px flex-1 bg-brand-accent/40" aria-hidden />
+        <span className="text-sm text-brand-text/75">O</span>
+        <span className="h-px flex-1 bg-brand-accent/40" aria-hidden />
+      </div>
 
       <LoginForm />
 
