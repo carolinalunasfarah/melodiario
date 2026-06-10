@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, type Transition } from "motion/react";
-import { cn } from "@/src/modules/utils/cn";
+import { cn } from "@/src/modules/utils";
 import { AVATAR_SIZE, RING_AVATARS } from "./constants";
 
 function floatAnimation(delay: number): {

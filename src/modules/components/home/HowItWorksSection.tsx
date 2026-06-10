@@ -8,7 +8,7 @@ import {
   CardDescription,
   CardTitle,
 } from "@/src/modules/components/ui";
-import { cn } from "@/src/modules/utils/cn";
+import { cn } from "@/src/modules/utils";
 import { STEPS, STEP_COLORS } from "./constants";
 import { HowItWorksSectionProps } from "./types";
 

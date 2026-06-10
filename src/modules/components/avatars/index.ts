@@ -6,4 +6,4 @@ export { default as Speaker } from "./Speaker";
 export { default as Turntable } from "./Turntable";
 
 export * from "./types";
-export * from "./avatarStyles";
+export * from "./styles";

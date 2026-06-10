@@ -7,7 +7,7 @@ import {
   HowItWorksSection,
 } from "@/src/modules/components/home";
 import { Button, buttonVariants } from "@/src/modules/components/ui";
-import { cn } from "@/src/modules/utils/cn";
+import { cn } from "@/src/modules/utils";
 
 export default function HomePageContent() {
   const [showHowItWorks, setShowHowItWorks] = useState(false);

@@ -1,9 +1,9 @@
-import { cn } from "@/src/modules/utils/cn";
+import { cn } from "@/src/modules/utils";
 import {
   avatarContainerClass,
   avatarIconClass,
   avatarStrokeClass,
-} from "./avatarStyles";
+} from "./styles";
 import { AvatarProps } from "./types";
 
 const Turntable = ({
