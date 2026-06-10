@@ -17,6 +17,7 @@ export type SupabaseUser = {
   avatar_color?: string | null;
   avatar_external_url?: string | null;
   nickname?: string | null;
+  password_hash?: string | null;
 };
 
 export type CreateUserInput = Omit<SupabaseUser, "id" | "created_at">;

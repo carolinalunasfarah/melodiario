@@ -2,7 +2,6 @@ import NextAuth from "next-auth";
 import type { NextAuthConfig } from "next-auth";
 import { getUserByEmail, createUser } from "../supabase/data-service";
 import { authProviders } from "./providers";
-import { AvatarSource } from "../supabase/types";
 
 export const authConfig = {
   providers: authProviders,
@@ -18,15 +17,16 @@ export const authConfig = {
       try {
         const existingUser = await getUserByEmail(user.email);
 
-        if (!existingUser) {
+        if (existingUser?.password_hash && account?.provider === "google") {
+          return "/login?error=email-account";
+        }
+
+        if (!existingUser && account?.provider !== "credentials") {
           await createUser({
             email: user.email,
-            name: user.name ?? "",
-            avatar_source: (account?.provider as AvatarSource) ?? "custom",
-            avatar_type: "turntable",
-            avatar_color: "#c4b5fd",
-            avatar_external_url: user.image ?? "",
-            nickname: user.name ?? "",
+            name: user.name,
+            avatar_source: "google",
+            avatar_external_url: user.image ?? null,
           });
         }
 
