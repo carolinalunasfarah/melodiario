@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import { searchSpotifyTracks } from "@/src/modules/actions/spotify";
+import { searchSpotifyTracks } from "@/src/modules/lib/spotify/actions";
 import type { SpotifyTrack } from "@/src/modules/lib/spotify/types";
 
 type UseSpotifyTrackSearchOptions = {
