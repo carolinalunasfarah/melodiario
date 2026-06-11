@@ -30,6 +30,7 @@ export const authConfig = {
           await createUser({
             email,
             name: getFirstName(user.name) ?? user.name ?? null,
+            avatar_source: "google",
             avatar_external_url: user.image ?? null,
           });
         }
