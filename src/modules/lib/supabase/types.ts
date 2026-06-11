@@ -8,6 +8,15 @@ export type AvatarType =
   | "speaker"
   | "turntable";
 
+export type AvatarColor =
+  | "happiness"
+  | "sadness"
+  | "surprise"
+  | "disgust"
+  | "rage"
+  | "anxiety"
+  | "neutral";
+
 export type SupabaseUser = {
   id: string;
   created_at: string;
@@ -15,7 +24,7 @@ export type SupabaseUser = {
   email?: string | null;
   avatar_source?: AvatarSource | null;
   avatar_type?: AvatarType | null;
-  avatar_color?: string | null;
+  avatar_color?: AvatarColor | null;
   avatar_external_url?: string | null;
   nickname?: string | null;
   password_hash?: string | null;

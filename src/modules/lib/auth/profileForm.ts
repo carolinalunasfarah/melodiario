@@ -1,71 +1,39 @@
 import type {
-  AvatarSource,
+  AvatarColor,
   AvatarType,
   ProfileUpdateInput,
   SupabaseUser,
-} from "@/src/modules/lib/supabase/types";
-import { isCredentialsUser } from "@/src/modules/lib/supabase/utils";
-import type { ProfileFormConfig } from "./types";
-import { isAllowedAvatarExternalUrl, NICKNAME_MAX_LENGTH } from "./constants";
+} from "../supabase/types";
+import { getUserProfileKind } from "../supabase/utils";
+import { resolveGoogleAvatarUrl } from "./profileAvatar";
+import type { ProfileEditorState, ProfileFormConfig } from "./types";
 
-export type ProfileFormValues = {
-  useCustomNickname: boolean;
-  useCustomAvatar: boolean;
-  useGoogleAvatar: boolean;
-  nickname: string;
-  avatarType: AvatarType | null;
-  avatarColor: string;
-  showNicknameInput: boolean;
-  showAvatarPicker: boolean;
-};
+export type ProfileFields = ProfileUpdateInput;
 
-export type ProfileFormParsed = {
-  useCustomNickname: boolean;
-  useCustomAvatar: boolean;
-  nickname: string;
-  avatarSource: AvatarSource | null;
-  avatarType: AvatarType | null;
-  avatarColor: string;
-  avatarExternalUrl: string | null;
-};
+type ProfileContext = Pick<ProfileFormConfig, "kind" | "googleAvatarUrl">;
 
-type ProfileSnapshot = ProfileUpdateInput;
+type ProfileFieldsSource =
+  | { source: "config"; config: ProfileFormConfig }
+  | { source: "user"; user: SupabaseUser; sessionImage?: string | null };
 
-function parseAvatarSource(
-  value: FormDataEntryValue | null,
-): AvatarSource | null {
-  if (value === "google" || value === "custom") return value;
-  return null;
-}
+export function profileFieldsFrom(input: ProfileFieldsSource): ProfileFields {
+  if (input.source === "config") {
+    const { config } = input;
 
-function parseAvatarType(value: FormDataEntryValue | null): AvatarType | null {
-  const types: AvatarType[] = [
-    "cassette",
-    "cd",
-    "headphones",
-    "microphone",
-    "speaker",
-    "turntable",
-  ];
-
-  if (typeof value === "string" && types.includes(value as AvatarType)) {
-    return value as AvatarType;
+    return {
+      nickname: config.nickname.trim() || null,
+      avatar_source: config.avatarSource,
+      avatar_type: config.avatarType,
+      avatar_color: config.avatarColor,
+      avatar_external_url:
+        config.avatarSource === "google" ? config.googleAvatarUrl : null,
+    };
   }
 
-  return null;
-}
-
-function isChecked(formData: FormData, name: string) {
-  return formData.get(name) === "on";
-}
-
-function userToSnapshot(
-  user: SupabaseUser,
-  sessionImage?: string | null,
-): ProfileSnapshot {
+  const { user, sessionImage } = input;
   const googlePhotoUrl =
     user.avatar_source === "google"
-      ? (user.avatar_external_url ?? sessionImage ?? null)
+      ? resolveGoogleAvatarUrl(user, sessionImage)
       : null;
 
   return {
@@ -77,23 +45,7 @@ function userToSnapshot(
   };
 }
 
-function configToSnapshot(
-  config: ProfileFormConfig,
-  sessionImage?: string | null,
-): ProfileSnapshot {
-  const googlePhotoUrl = config.avatarPreviewUrl ?? sessionImage ?? null;
-
-  return {
-    nickname: config.nickname.trim() || null,
-    avatar_source: config.avatarSource,
-    avatar_type: config.avatarType,
-    avatar_color: config.avatarColor,
-    avatar_external_url:
-      config.avatarSource === "google" ? googlePhotoUrl : null,
-  };
-}
-
-function snapshotsEqual(a: ProfileSnapshot, b: ProfileSnapshot) {
+function profileFieldsEqual(a: ProfileFields, b: ProfileFields): boolean {
   return (
     a.nickname === b.nickname &&
     a.avatar_source === b.avatar_source &&
@@ -103,169 +55,98 @@ function snapshotsEqual(a: ProfileSnapshot, b: ProfileSnapshot) {
   );
 }
 
-export function buildProfileFormData(
-  config: ProfileFormConfig,
-  values: ProfileFormValues,
-  sessionImage?: string | null,
-): FormData {
-  const formData = new FormData();
-  const hasNickname = Boolean(config.nickname.trim());
-  const hasCustomAvatar =
-    config.avatarSource === "custom" && Boolean(config.avatarType);
-  const googlePhotoUrl = config.avatarPreviewUrl ?? sessionImage ?? null;
-
-  if (config.mode === "google" && (hasNickname || values.useCustomNickname)) {
-    formData.set("use_custom_nickname", "on");
+/** Omits avatar_external_url when saving custom avatar to avoid deleting Google photo URL from DB. */
+function toProfileUpdate(target: ProfileFields): ProfileUpdateInput {
+  if (target.avatar_source === "custom") {
+    return {
+      nickname: target.nickname,
+      avatar_source: target.avatar_source,
+      avatar_type: target.avatar_type,
+      avatar_color: target.avatar_color,
+    };
   }
-
-  if (values.showNicknameInput) {
-    formData.set("nickname", values.nickname);
-  }
-
-  if (values.useGoogleAvatar && googlePhotoUrl) {
-    formData.set("use_custom_avatar", "on");
-    formData.set("avatar_source", "google");
-    formData.set("avatar_external_url", googlePhotoUrl);
-    return formData;
-  }
-
-  const submitsCustomAvatar =
-    (config.mode === "credentials" && !hasCustomAvatar) ||
-    (values.useCustomAvatar && values.showAvatarPicker);
-
-  if (submitsCustomAvatar) {
-    formData.set("use_custom_avatar", "on");
-    formData.set("avatar_source", "custom");
-    formData.set("avatar_type", values.avatarType ?? "");
-    formData.set("avatar_color", values.avatarColor);
-  }
-
-  return formData;
-}
-
-export function parseProfileFormData(formData: FormData): ProfileFormParsed {
-  return {
-    useCustomNickname: isChecked(formData, "use_custom_nickname"),
-    useCustomAvatar: isChecked(formData, "use_custom_avatar"),
-    nickname: String(formData.get("nickname") ?? "").trim(),
-    avatarSource: parseAvatarSource(formData.get("avatar_source")),
-    avatarType: parseAvatarType(formData.get("avatar_type")),
-    avatarColor: String(formData.get("avatar_color") ?? "").trim(),
-    avatarExternalUrl:
-      String(formData.get("avatar_external_url") ?? "").trim() || null,
-  };
-}
-
-export function hasProfileFormChanges(
-  config: ProfileFormConfig,
-  values: ProfileFormValues,
-  sessionImage?: string | null,
-): boolean {
-  const parsed = parseProfileFormData(
-    buildProfileFormData(config, values, sessionImage),
-  );
-  const baseline = configToSnapshot(config, sessionImage);
-  const target = resolveProfileUpdate(parsed, baseline, {
-    google: config.mode === "google",
-    sessionImage,
-  });
-
-  return !snapshotsEqual(target, baseline);
-}
-
-function resolveProfileUpdate(
-  parsed: ProfileFormParsed,
-  current: ProfileSnapshot,
-  options: { google: boolean; sessionImage?: string | null },
-): ProfileSnapshot {
-  const update: ProfileSnapshot = { ...current };
-
-  if (options.google) {
-    if (parsed.useCustomNickname || current.nickname) {
-      update.nickname = parsed.nickname || null;
-    }
-
-    if (parsed.useCustomAvatar) {
-      if (parsed.avatarSource === "custom") {
-        update.avatar_source = "custom";
-        update.avatar_type = parsed.avatarType;
-        update.avatar_color = parsed.avatarColor || null;
-        update.avatar_external_url = null;
-      } else if (parsed.avatarSource === "google") {
-        update.avatar_source = "google";
-        update.avatar_type = null;
-        update.avatar_color = null;
-        update.avatar_external_url =
-          parsed.avatarExternalUrl ??
-          options.sessionImage ??
-          current.avatar_external_url ??
-          null;
-      }
-    }
-  } else {
-    if (parsed.nickname) update.nickname = parsed.nickname;
-
-    if (parsed.avatarSource === "custom") {
-      update.avatar_source = "custom";
-      update.avatar_type = parsed.avatarType;
-      update.avatar_color = parsed.avatarColor || null;
-      update.avatar_external_url = null;
-    }
-  }
-
-  return update;
-}
-
-export function buildProfileUpdate(
-  formData: FormData,
-  user: SupabaseUser,
-  sessionImage?: string | null,
-): ProfileUpdateInput | null {
-  const parsed = parseProfileFormData(formData);
-  const current = userToSnapshot(user, sessionImage);
-  const target = resolveProfileUpdate(parsed, current, {
-    google: !isCredentialsUser(user),
-    sessionImage,
-  });
-
-  if (snapshotsEqual(target, current)) return null;
 
   return target;
 }
 
-export function validateProfileUpdate(
-  formData: FormData,
+export function createInitialEditorState(
+  config: ProfileFormConfig,
+  defaults: { avatarType: AvatarType; avatarColor: AvatarColor },
+): ProfileEditorState {
+  return {
+    nicknameOptIn: false,
+    nickname: config.nickname,
+    avatarIntent: "idle",
+    avatarType: config.avatarType ?? defaults.avatarType,
+    avatarColor: config.avatarColor ?? defaults.avatarColor,
+  };
+}
+
+export function resolveProfileTarget(
+  saved: ProfileFields,
+  context: ProfileContext,
+  editor: ProfileEditorState,
+): ProfileFields {
+  const target: ProfileFields = { ...saved };
+  const hasCustomAvatar =
+    saved.avatar_source === "custom" && Boolean(saved.avatar_type);
+
+  if (context.kind === "google") {
+    if (editor.nicknameOptIn || saved.nickname) {
+      target.nickname = editor.nickname.trim() || null;
+    }
+  } else if (editor.nickname.trim()) {
+    target.nickname = editor.nickname.trim();
+  }
+
+  if (editor.avatarIntent === "use_google" && context.googleAvatarUrl) {
+    target.avatar_source = "google";
+    target.avatar_type = null;
+    target.avatar_color = null;
+    target.avatar_external_url = context.googleAvatarUrl;
+  } else if (
+    (context.kind === "credentials" && !hasCustomAvatar) ||
+    editor.avatarIntent === "pick_custom"
+  ) {
+    target.avatar_source = "custom";
+    target.avatar_type = editor.avatarType;
+    target.avatar_color = editor.avatarColor;
+    target.avatar_external_url = null;
+  }
+
+  return target;
+}
+
+export function hasProfileFormChanges(
+  config: ProfileFormConfig,
+  editor: ProfileEditorState,
+): boolean {
+  const saved = profileFieldsFrom({ source: "config", config });
+  const target = resolveProfileTarget(
+    saved,
+    { kind: config.kind, googleAvatarUrl: config.googleAvatarUrl },
+    editor,
+  );
+
+  return !profileFieldsEqual(saved, target);
+}
+
+export function buildProfileUpdate(
+  editor: ProfileEditorState,
   user: SupabaseUser,
   sessionImage?: string | null,
-): string | null {
-  const parsed = parseProfileFormData(formData);
-  const google = !isCredentialsUser(user);
+): ProfileUpdateInput | null {
+  const saved = profileFieldsFrom({ source: "user", user, sessionImage });
+  const target = resolveProfileTarget(
+    saved,
+    {
+      kind: getUserProfileKind(user),
+      googleAvatarUrl: resolveGoogleAvatarUrl(user, sessionImage),
+    },
+    editor,
+  );
 
-  if (parsed.nickname.length > NICKNAME_MAX_LENGTH) {
-    return `El nombre no puede tener más de ${NICKNAME_MAX_LENGTH} caracteres.`;
-  }
+  if (profileFieldsEqual(saved, target)) return null;
 
-  if (google) {
-    if (parsed.useCustomAvatar && parsed.avatarSource === "custom") {
-      if (!parsed.avatarType) return "Elige un avatar.";
-      if (!parsed.avatarColor) return "Elige un color para tu avatar.";
-    }
-
-    if (parsed.useCustomAvatar && parsed.avatarSource === "google") {
-      const avatarUrl =
-        parsed.avatarExternalUrl ??
-        sessionImage ??
-        user.avatar_external_url ??
-        null;
-
-      if (!isAllowedAvatarExternalUrl(avatarUrl)) {
-        return "La foto de perfil no es válida.";
-      }
-    }
-  } else if (parsed.avatarSource === "custom") {
-    if (!parsed.avatarType) return "Elige un avatar.";
-    if (!parsed.avatarColor) return "Elige un color para tu avatar.";
-  }
-
-  return null;
+  return toProfileUpdate(target);
 }

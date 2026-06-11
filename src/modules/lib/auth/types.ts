@@ -1,4 +1,5 @@
-import type { AvatarSource, AvatarType } from "../supabase/types";
+import type { AvatarColor, AvatarSource, AvatarType } from "../supabase/types";
+import type { UserProfileKind } from "../supabase/utils";
 
 export type ProfileFormState = {
   error?: string;
@@ -6,14 +7,22 @@ export type ProfileFormState = {
 };
 
 export type ProfileFormConfig = {
-  mode: "google" | "credentials";
-  showNicknameToggle: boolean;
-  showAvatarToggle: boolean;
+  kind: UserProfileKind;
   displayName: string;
   googleName: string | null;
-  avatarPreviewUrl: string | null;
+  googleAvatarUrl: string | null;
   nickname: string;
   avatarSource: AvatarSource | null;
   avatarType: AvatarType | null;
-  avatarColor: string | null;
+  avatarColor: AvatarColor | null;
+};
+
+export type AvatarEditIntent = "idle" | "pick_custom" | "use_google";
+
+export type ProfileEditorState = {
+  nicknameOptIn: boolean;
+  nickname: string;
+  avatarIntent: AvatarEditIntent;
+  avatarType: AvatarType;
+  avatarColor: AvatarColor;
 };

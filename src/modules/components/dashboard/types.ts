@@ -1,15 +1,9 @@
-import type { AvatarType } from "@/src/modules/lib/supabase/types";
+import type { AvatarColor, AvatarType } from "@/src/modules/lib/supabase/types";
 import { ComponentType } from "react";
 import type { AvatarProps } from "../avatars";
 
-export type MoodToken =
-  | "happiness"
-  | "sadness"
-  | "surprise"
-  | "disgust"
-  | "rage"
-  | "anxiety"
-  | "neutral";
+/** Diary moods use the same palette as avatar colors. */
+export type MoodToken = AvatarColor;
 
 export type DiaryEntry = {
   date: string;
@@ -28,13 +22,15 @@ export type DiarySectionProps = {
 };
 
 export type {
+  AvatarEditIntent,
+  ProfileEditorState,
   ProfileFormConfig,
   ProfileFormState,
 } from "@/src/modules/lib/auth/types";
 
 export type HeaderAvatar =
   | { kind: "image"; url: string }
-  | { kind: "custom"; avatarType: AvatarType; color: string };
+  | { kind: "custom"; avatarType: AvatarType; color: AvatarColor };
 
 export type AvatarOption = {
   type: AvatarType;

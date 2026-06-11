@@ -4,14 +4,52 @@ import { AuthError } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { auth, signIn, signOut } from "./auth";
 import { hashPassword } from "./password";
-import { buildProfileUpdate, validateProfileUpdate } from "./profileForm";
-import type { ProfileFormState } from "./types";
+import { buildProfileUpdate, profileFieldsFrom } from "./profileForm";
+import { resolveGoogleAvatarUrl } from "./profileAvatar";
+import { isAllowedAvatarExternalUrl, NICKNAME_MAX_LENGTH } from "./constants";
+import type { ProfileEditorState, ProfileFormState } from "./types";
+import { getUserProfileKind } from "@/src/modules/lib/supabase/utils";
+import type { SupabaseUser } from "@/src/modules/lib/supabase/types";
 import {
   createUser,
   getUserByEmail,
   getUserById,
   updateUserById,
 } from "@/src/modules/lib/supabase/data-service";
+
+function validateProfileEditor(
+  editor: ProfileEditorState,
+  user: SupabaseUser,
+  sessionImage?: string | null,
+): string | null {
+  const kind = getUserProfileKind(user);
+  const saved = profileFieldsFrom({ source: "user", user, sessionImage });
+  const hasCustomAvatar =
+    saved.avatar_source === "custom" && Boolean(saved.avatar_type);
+
+  if (editor.nickname.length > NICKNAME_MAX_LENGTH) {
+    return `El nombre no puede tener más de ${NICKNAME_MAX_LENGTH} caracteres.`;
+  }
+
+  const appliesCustomAvatar =
+    (kind === "credentials" && !hasCustomAvatar) ||
+    editor.avatarIntent === "pick_custom";
+
+  if (appliesCustomAvatar) {
+    if (!editor.avatarType) return "Elige un avatar.";
+    if (!editor.avatarColor) return "Elige un color para tu avatar.";
+  }
+
+  if (kind === "google" && editor.avatarIntent === "use_google") {
+    const avatarUrl = resolveGoogleAvatarUrl(user, sessionImage);
+
+    if (!isAllowedAvatarExternalUrl(avatarUrl)) {
+      return "La foto de perfil no es válida.";
+    }
+  }
+
+  return null;
+}
 
 export async function signInWithGoogle() {
   await signIn("google", { redirectTo: "/dashboard" });
@@ -109,7 +147,7 @@ export async function signInWithEmailAndPassword(
 
 export async function updateProfile(
   _prevState: ProfileFormState,
-  formData: FormData,
+  editor: ProfileEditorState,
 ): Promise<ProfileFormState> {
   const session = await auth();
 
@@ -124,8 +162,8 @@ export async function updateProfile(
     return { error: "No se encontró tu perfil." };
   }
 
-  const validationError = validateProfileUpdate(
-    formData,
+  const validationError = validateProfileEditor(
+    editor,
     user,
     session.user.image,
   );
@@ -133,7 +171,7 @@ export async function updateProfile(
     return { error: validationError };
   }
 
-  const updateData = buildProfileUpdate(formData, user, session.user.image);
+  const updateData = buildProfileUpdate(editor, user, session.user.image);
   if (!updateData) {
     return {};
   }

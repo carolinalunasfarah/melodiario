@@ -58,9 +58,11 @@ export default function DashboardUserMenu({
                 displayName={displayName}
               />
             ) : null}
-            <span className="max-w-40 truncate text-sm font-medium text-brand-text">
-              {displayName}
-            </span>
+            {displayName ? (
+              <span className="max-w-40 truncate text-sm font-medium text-brand-text">
+                {displayName}
+              </span>
+            ) : null}
           </div>
         ) : null}
 
@@ -107,7 +109,6 @@ export default function DashboardUserMenu({
           </DialogHeader>
           <ProfileForm
             config={profileConfig}
-            sessionImage={sessionImage}
             onSuccess={() => setProfileOpen(false)}
             onCancel={() => setProfileOpen(false)}
           />

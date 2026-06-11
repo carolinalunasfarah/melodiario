@@ -10,10 +10,11 @@ import {
 } from "react";
 import { updateProfile } from "@/src/modules/lib/auth/actions";
 import {
-  buildProfileFormData,
+  createInitialEditorState,
   hasProfileFormChanges,
 } from "@/src/modules/lib/auth/profileForm";
 import type {
+  AvatarEditIntent,
   ProfileFormConfig,
   ProfileFormState,
 } from "@/src/modules/lib/auth/types";
@@ -27,19 +28,18 @@ import {
 } from "./constants";
 import { Button, Input, Label, Switch } from "@/src/modules/components/ui";
 import { cn } from "@/src/modules/utils";
+import { getProfileEditorUi } from "./utils";
 
 const initialState: ProfileFormState = {};
 
 type ProfileFormProps = {
   config: ProfileFormConfig;
-  sessionImage?: string | null;
   onSuccess?: () => void;
   onCancel?: () => void;
 };
 
 export default function ProfileForm({
   config,
-  sessionImage,
   onSuccess,
   onCancel,
 }: ProfileFormProps) {
@@ -48,77 +48,35 @@ export default function ProfileForm({
     initialState,
   );
 
-  const hasNickname = Boolean(config.nickname.trim());
-  const hasCustomAvatar =
-    config.avatarSource === "custom" && Boolean(config.avatarType);
-  const googlePhotoUrl = config.avatarPreviewUrl ?? sessionImage ?? null;
-
-  const [useCustomNickname, setUseCustomNickname] = useState(false);
-  const [useCustomAvatar, setUseCustomAvatar] = useState(false);
-  const [useGoogleAvatar, setUseGoogleAvatar] = useState(false);
-  const [nickname, setNickname] = useState(config.nickname);
-  const [avatarType, setAvatarType] = useState(
-    config.avatarType ?? DEFAULT_AVATAR_TYPE,
-  );
-  const [avatarColor, setAvatarColor] = useState(
-    config.avatarColor ?? DEFAULT_AVATAR_MOOD,
+  const [editor, setEditor] = useState(() =>
+    createInitialEditorState(config, {
+      avatarType: DEFAULT_AVATAR_TYPE,
+      avatarColor: DEFAULT_AVATAR_MOOD,
+    }),
   );
 
   useEffect(() => {
     if (state.success) onSuccess?.();
   }, [state.success, onSuccess]);
 
-  const showNicknameInput =
-    config.mode === "credentials" || hasNickname || useCustomNickname;
-
-  const showAvatarPicker =
-    (config.mode === "credentials" && !hasCustomAvatar) || useCustomAvatar;
-
-  const formValues = useMemo(
-    () => ({
-      useCustomNickname,
-      useCustomAvatar,
-      useGoogleAvatar,
-      nickname,
-      avatarType,
-      avatarColor,
-      showNicknameInput,
-      showAvatarPicker,
-    }),
-    [
-      useCustomNickname,
-      useCustomAvatar,
-      useGoogleAvatar,
-      nickname,
-      avatarType,
-      avatarColor,
-      showNicknameInput,
-      showAvatarPicker,
-    ],
+  const ui = useMemo(
+    () => getProfileEditorUi(config, editor),
+    [config, editor],
   );
 
   const hasChanges = useMemo(
-    () => hasProfileFormChanges(config, formValues, sessionImage),
-    [config, formValues, sessionImage],
+    () => hasProfileFormChanges(config, editor),
+    [config, editor],
   );
 
-  const handleCustomAvatarChange = (checked: boolean) => {
-    const next = Boolean(checked);
-    setUseCustomAvatar(next);
-    if (next) setUseGoogleAvatar(false);
-  };
-
-  const handleGoogleAvatarChange = (checked: boolean) => {
-    const next = Boolean(checked);
-    setUseGoogleAvatar(next);
-    if (next) setUseCustomAvatar(false);
+  const setAvatarIntent = (intent: AvatarEditIntent) => {
+    setEditor((current) => ({ ...current, avatarIntent: intent }));
   };
 
   function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
-    const formData = buildProfileFormData(config, formValues, sessionImage);
     startTransition(() => {
-      formAction(formData);
+      formAction(editor);
     });
   }
 
@@ -127,12 +85,12 @@ export default function ProfileForm({
       <section className="flex flex-col gap-3">
         <Label className="text-brand-text">Nombre</Label>
 
-        {config.mode === "google" ? (
+        {config.kind === "google" ? (
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-brand-text">
               {config.googleName ?? "—"}
             </p>
-            {!hasNickname ? (
+            {ui.showNicknameOptIn ? (
               <Label
                 htmlFor="use_custom_nickname"
                 className="font-normal normal-case"
@@ -140,9 +98,12 @@ export default function ProfileForm({
                 <span>¿Prefieres otro nombre?</span>
                 <Switch
                   id="use_custom_nickname"
-                  checked={useCustomNickname}
+                  checked={editor.nicknameOptIn}
                   onCheckedChange={(checked) =>
-                    setUseCustomNickname(Boolean(checked))
+                    setEditor((current) => ({
+                      ...current,
+                      nicknameOptIn: Boolean(checked),
+                    }))
                   }
                 />
               </Label>
@@ -150,17 +111,22 @@ export default function ProfileForm({
           </div>
         ) : null}
 
-        {showNicknameInput ? (
+        {ui.showNicknameInput ? (
           <div className="flex flex-col gap-2">
             <Input
               id="nickname"
-              value={nickname}
+              value={editor.nickname}
               maxLength={NICKNAME_MAX_LENGTH}
-              onChange={(event) => setNickname(event.target.value)}
+              onChange={(event) =>
+                setEditor((current) => ({
+                  ...current,
+                  nickname: event.target.value,
+                }))
+              }
               placeholder="Escribe tu nombre para mostrar"
             />
             <p className="text-right text-xs text-brand-text/45">
-              {nickname.length}/{NICKNAME_MAX_LENGTH}
+              {editor.nickname.length}/{NICKNAME_MAX_LENGTH}
             </p>
           </div>
         ) : null}
@@ -175,30 +141,34 @@ export default function ProfileForm({
       <section className="flex flex-col gap-3">
         <Label className="text-brand-text">Avatar</Label>
 
-        {config.mode === "google" && googlePhotoUrl && !hasCustomAvatar ? (
+        {ui.showGoogleAvatarDefault && config.googleAvatarUrl ? (
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <AvatarDisplay
-                avatar={{ kind: "image", url: googlePhotoUrl }}
+                avatar={{ kind: "image", url: config.googleAvatarUrl }}
                 displayName={config.displayName}
               />
               <p className="text-sm text-brand-text/70">Foto de Google</p>
             </div>
             <Label
-              htmlFor="use_custom_avatar"
+              htmlFor="pick_custom_avatar"
               className="flex shrink-0 cursor-pointer items-center gap-3 font-normal normal-case text-xs text-brand-text/80"
             >
               <span>Elegir avatar personalizado</span>
               <Switch
-                id="use_custom_avatar"
-                checked={useCustomAvatar}
-                onCheckedChange={handleCustomAvatarChange}
+                id="pick_custom_avatar"
+                checked={editor.avatarIntent === "pick_custom"}
+                onCheckedChange={(checked) =>
+                  setAvatarIntent(checked ? "pick_custom" : "idle")
+                }
               />
             </Label>
           </div>
         ) : null}
 
-        {hasCustomAvatar && config.avatarType && config.avatarColor ? (
+        {ui.showCustomAvatarSummary &&
+        config.avatarType &&
+        config.avatarColor ? (
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3">
@@ -215,23 +185,25 @@ export default function ProfileForm({
                 </p>
               </div>
               <Label
-                htmlFor="use_custom_avatar_edit"
+                htmlFor="edit_custom_avatar"
                 className="font-normal normal-case"
               >
                 <span>Editar</span>
                 <Switch
-                  id="use_custom_avatar_edit"
-                  checked={useCustomAvatar}
-                  onCheckedChange={handleCustomAvatarChange}
+                  id="edit_custom_avatar"
+                  checked={editor.avatarIntent === "pick_custom"}
+                  onCheckedChange={(checked) =>
+                    setAvatarIntent(checked ? "pick_custom" : "idle")
+                  }
                 />
               </Label>
             </div>
 
-            {config.mode === "google" && googlePhotoUrl ? (
+            {ui.showGoogleAvatarSwitchBack && config.googleAvatarUrl ? (
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <AvatarDisplay
-                    avatar={{ kind: "image", url: googlePhotoUrl }}
+                    avatar={{ kind: "image", url: config.googleAvatarUrl }}
                     displayName={config.displayName}
                   />
                   <p className="text-sm text-brand-text/70">Foto de Google</p>
@@ -243,8 +215,10 @@ export default function ProfileForm({
                   <span>Usar esta foto</span>
                   <Switch
                     id="use_google_avatar"
-                    checked={useGoogleAvatar}
-                    onCheckedChange={handleGoogleAvatarChange}
+                    checked={editor.avatarIntent === "use_google"}
+                    onCheckedChange={(checked) =>
+                      setAvatarIntent(checked ? "use_google" : "idle")
+                    }
                   />
                 </Label>
               </div>
@@ -252,7 +226,7 @@ export default function ProfileForm({
           </div>
         ) : null}
 
-        {showAvatarPicker && !useGoogleAvatar ? (
+        {ui.showAvatarPicker && editor.avatarIntent !== "use_google" ? (
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-3">
               <span className="text-xs font-medium tracking-wide text-brand-text/70 uppercase">
@@ -265,16 +239,21 @@ export default function ProfileForm({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    onClick={() => setAvatarType(type)}
-                    aria-pressed={avatarType === type}
+                    onClick={() =>
+                      setEditor((current) => ({
+                        ...current,
+                        avatarType: type,
+                      }))
+                    }
+                    aria-pressed={editor.avatarType === type}
                     aria-label={label}
                   >
                     <Component
-                      backgroundColor={`var(--color-mood-${avatarColor})`}
+                      backgroundColor={`var(--color-mood-${editor.avatarColor})`}
                       size={40}
                       className={cn(
                         "rounded-full border-2 transition-transform hover:scale-110",
-                        avatarType === type
+                        editor.avatarType === type
                           ? "scale-120 border-4 border-brand-text/80"
                           : "border-transparent",
                       )}
@@ -295,16 +274,21 @@ export default function ProfileForm({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    onClick={() => setAvatarColor(id)}
+                    onClick={() =>
+                      setEditor((current) => ({
+                        ...current,
+                        avatarColor: id,
+                      }))
+                    }
                     className={cn(
                       "rounded-full border-2 transition-transform hover:scale-110",
                       colorClass,
-                      avatarColor === id
+                      editor.avatarColor === id
                         ? "scale-120 border-4 border-brand-text/80"
                         : "border-transparent",
                     )}
                     aria-label={label}
-                    aria-pressed={avatarColor === id}
+                    aria-pressed={editor.avatarColor === id}
                   />
                 ))}
               </div>
