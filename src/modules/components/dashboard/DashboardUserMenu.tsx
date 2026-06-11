@@ -1,7 +1,7 @@
 "use client";
 
 import { Menu } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   getDisplayName,
   getHeaderAvatar,
@@ -36,6 +36,7 @@ export default function DashboardUserMenu({
   sessionImage,
 }: DashboardUserMenuProps) {
   const [profileOpen, setProfileOpen] = useState(false);
+  const closeProfile = useCallback(() => setProfileOpen(false), []);
   const showIdentity = shouldShowHeaderIdentity(user);
   const headerAvatar = getHeaderAvatar(user, sessionImage);
   const displayName = getDisplayName(user);
@@ -109,8 +110,8 @@ export default function DashboardUserMenu({
           </DialogHeader>
           <ProfileForm
             config={profileConfig}
-            onSuccess={() => setProfileOpen(false)}
-            onCancel={() => setProfileOpen(false)}
+            onSuccess={closeProfile}
+            onCancel={closeProfile}
           />
         </DialogContent>
       </Dialog>

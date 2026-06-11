@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@/src/modules/styles/globals.css";
+import { Toaster } from "../modules/components/ui/Sonner";
 
 const interFont = Inter({
   subsets: ["latin"],
@@ -24,6 +25,7 @@ export default function RootLayout({
     <html lang="es" className={`${interFont.className} h-full antialiased`}>
       <body className="flex flex-col min-h-screen bg-brand-background font-sans text-brand-text">
         <main className="w-full">{children}</main>
+        <Toaster />
       </body>
     </html>
   );

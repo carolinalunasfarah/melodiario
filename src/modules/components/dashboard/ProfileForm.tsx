@@ -26,8 +26,15 @@ import {
   PROFILE_AVATAR_OPTIONS,
   NICKNAME_MAX_LENGTH,
 } from "./constants";
-import { Button, Input, Label, Switch } from "@/src/modules/components/ui";
+import {
+  Button,
+  ErrorMessage,
+  Input,
+  Label,
+  Switch,
+} from "@/src/modules/components/ui";
 import { cn } from "@/src/modules/utils";
+import { toast } from "sonner";
 import { getProfileEditorUi } from "./utils";
 
 const initialState: ProfileFormState = {};
@@ -56,8 +63,10 @@ export default function ProfileForm({
   );
 
   useEffect(() => {
-    if (state.success) onSuccess?.();
-  }, [state.success, onSuccess]);
+    if (!state.success) return;
+    toast.success("Perfil actualizado.", { id: "profile-updated" });
+    onSuccess?.();
+  }, [state, onSuccess]);
 
   const ui = useMemo(
     () => getProfileEditorUi(config, editor),
@@ -297,13 +306,7 @@ export default function ProfileForm({
         ) : null}
       </section>
 
-      {state.error ? (
-        <p className="text-sm text-mood-rage">{state.error}</p>
-      ) : null}
-
-      {state.success ? (
-        <p className="text-sm text-mood-anxiety">Perfil actualizado.</p>
-      ) : null}
+      {state.error ? <ErrorMessage>{state.error}</ErrorMessage> : null}
 
       <div className="flex flex-col gap-3">
         <Button
