@@ -1,17 +1,13 @@
 import Link from "next/link";
-import { Button } from "@/src/modules/components/ui";
+import { Button, ErrorMessage } from "@/src/modules/components/ui";
 import { LoginForm } from "@/src/modules/components/login";
 import { signInWithGoogle } from "@/src/modules/lib/auth/actions";
+import { getLoginUrlErrorMessage } from "@/src/modules/lib/auth/loginErrors";
 import { Metadata } from "next";
 import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Iniciar sesión",
-};
-
-const loginErrors: Record<string, string> = {
-  "email-account":
-    "Esta cuenta usa email y contraseña. Inicia sesión con el formulario de abajo.",
 };
 
 type LoginPageProps = {
@@ -20,7 +16,7 @@ type LoginPageProps = {
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const { error } = await searchParams;
-  const pageError = error ? loginErrors[error] : undefined;
+  const pageError = getLoginUrlErrorMessage(error);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-8 px-6 py-12">
@@ -33,9 +29,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       </div>
 
       {pageError ? (
-        <p className="max-w-sm text-center text-sm text-mood-rage">
+        <ErrorMessage className="max-w-sm text-center">
           {pageError}
-        </p>
+        </ErrorMessage>
       ) : null}
 
       <form action={signInWithGoogle} className="w-full max-w-sm">

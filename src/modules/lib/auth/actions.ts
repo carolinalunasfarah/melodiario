@@ -7,6 +7,8 @@ import { hashPassword } from "./password";
 import { buildProfileUpdate, profileFieldsFrom } from "./profileForm";
 import { resolveGoogleAvatarUrl } from "./profileAvatar";
 import { isAllowedAvatarExternalUrl, NICKNAME_MAX_LENGTH } from "./constants";
+import { LOGIN_FORM_ERRORS } from "./loginErrors";
+import { isValidEmail } from "@/src/modules/utils";
 import type { ProfileEditorState, ProfileFormState } from "./types";
 import { getUserProfileKind } from "@/src/modules/lib/supabase/utils";
 import type { SupabaseUser } from "@/src/modules/lib/supabase/types";
@@ -71,14 +73,18 @@ export async function signInWithEmailAndPassword(
   const password = formData.get("password") as string;
 
   if (!email || !password) {
-    return { error: "Email y contraseña son obligatorios." };
+    return { error: LOGIN_FORM_ERRORS.requiredFields };
+  }
+
+  if (!isValidEmail(email)) {
+    return { error: LOGIN_FORM_ERRORS.invalidEmail };
   }
 
   const existingUser = await getUserByEmail(email);
 
   if (existingUser) {
     if (!existingUser.password_hash) {
-      return { error: "Esta cuenta usa Google. Inicia sesión con Google." };
+      return { error: LOGIN_FORM_ERRORS.googleAccount };
     }
 
     try {
@@ -89,7 +95,7 @@ export async function signInWithEmailAndPassword(
       });
     } catch (error) {
       if (error instanceof AuthError) {
-        return { error: "Email o contraseña incorrectos." };
+        return { error: LOGIN_FORM_ERRORS.invalidCredentials };
       }
 
       throw error;
@@ -99,7 +105,7 @@ export async function signInWithEmailAndPassword(
   }
 
   if (password.length < 8) {
-    return { error: "La contraseña debe tener al menos 8 caracteres." };
+    return { error: LOGIN_FORM_ERRORS.passwordTooShort };
   }
 
   try {
@@ -117,7 +123,7 @@ export async function signInWithEmailAndPassword(
     });
   } catch (error) {
     if (error instanceof AuthError) {
-      return { error: "No se pudo iniciar sesión." };
+      return { error: LOGIN_FORM_ERRORS.signInFailed };
     }
 
     const racedUser = await getUserByEmail(email);
@@ -131,7 +137,7 @@ export async function signInWithEmailAndPassword(
         return {};
       } catch (signInError) {
         if (signInError instanceof AuthError) {
-          return { error: "No se pudo crear la cuenta. Inténtalo de nuevo." };
+          return { error: LOGIN_FORM_ERRORS.createAccountFailed };
         }
 
         throw signInError;
@@ -139,7 +145,7 @@ export async function signInWithEmailAndPassword(
     }
 
     console.error(error);
-    return { error: "No se pudo crear la cuenta. Inténtalo de nuevo." };
+    return { error: LOGIN_FORM_ERRORS.createAccountFailed };
   }
 
   return {};

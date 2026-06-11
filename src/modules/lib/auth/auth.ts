@@ -4,6 +4,7 @@ import {
   getUserByEmail,
   createUser,
 } from "@/src/modules/lib/supabase/data-service";
+import { LOGIN_URL_ERROR_CODES } from "./loginErrors";
 import { authProviders } from "./providers";
 import { getFirstName } from "@/src/modules/utils";
 
@@ -23,7 +24,7 @@ export const authConfig = {
         const existingUser = await getUserByEmail(email);
 
         if (existingUser?.password_hash && account?.provider === "google") {
-          return "/login?error=email-account";
+          return `/login?error=${LOGIN_URL_ERROR_CODES.emailAccount}`;
         }
 
         if (!existingUser && account?.provider !== "credentials") {

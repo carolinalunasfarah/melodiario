@@ -1,3 +1,9 @@
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export function isValidEmail(email: string): boolean {
+  return EMAIL_PATTERN.test(email);
+}
+
 export function getFirstName(fullName?: string | null): string | null {
   const trimmed = fullName?.trim();
   if (!trimmed) return null;
