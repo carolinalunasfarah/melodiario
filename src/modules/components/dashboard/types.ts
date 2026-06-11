@@ -8,7 +8,8 @@ export type MoodToken =
   | "surprise"
   | "disgust"
   | "rage"
-  | "anxiety";
+  | "anxiety"
+  | "neutral";
 
 export type DiaryEntry = {
   date: string;

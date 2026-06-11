@@ -258,7 +258,7 @@ export default function ProfileForm({
               <span className="text-xs font-medium tracking-wide text-brand-text/70 uppercase">
                 Elige un avatar
               </span>
-              <div className="grid grid-cols-6 gap-2">
+              <div className="grid grid-cols-7 gap-2">
                 {PROFILE_AVATAR_OPTIONS.map(({ type, label, Component }) => (
                   <Button
                     key={type}
@@ -288,7 +288,7 @@ export default function ProfileForm({
               <span className="text-xs font-medium tracking-wide text-brand-text/70 uppercase">
                 Elige un color
               </span>
-              <div className="grid grid-cols-6 gap-2">
+              <div className="grid grid-cols-7 gap-2">
                 {MOOD_OPTIONS.map(({ id, label, colorClass }) => (
                   <Button
                     key={id}

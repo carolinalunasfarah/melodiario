@@ -47,6 +47,11 @@ export const MOOD_OPTIONS: {
     label: "Ansiedad",
     colorClass: "bg-mood-anxiety hover:bg-mood-anxiety",
   },
+  {
+    id: "neutral",
+    label: "Neutral",
+    colorClass: "bg-mood-neutral hover:bg-mood-neutral",
+  },
 ];
 
 export const DEFAULT_AVATAR_MOOD: MoodToken = "happiness";
