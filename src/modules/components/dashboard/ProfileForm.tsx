@@ -1,11 +1,9 @@
 "use client";
 
 import {
-  startTransition,
-  useActionState,
-  useEffect,
   useMemo,
   useState,
+  useTransition,
   type SyntheticEvent,
 } from "react";
 import { updateProfile } from "@/src/modules/lib/auth/actions";
@@ -16,9 +14,9 @@ import {
 import type {
   AvatarEditIntent,
   ProfileFormConfig,
-  ProfileFormState,
 } from "@/src/modules/lib/auth/types";
 import AvatarDisplay from "./AvatarDisplay";
+import ProfileDeleteUser from "./ProfileDeleteUser";
 import {
   DEFAULT_AVATAR_MOOD,
   DEFAULT_AVATAR_TYPE,
@@ -37,8 +35,6 @@ import { cn } from "@/src/modules/utils";
 import { toast } from "sonner";
 import { getProfileEditorUi } from "./utils";
 
-const initialState: ProfileFormState = {};
-
 type ProfileFormProps = {
   config: ProfileFormConfig;
   onSuccess?: () => void;
@@ -50,23 +46,14 @@ export default function ProfileForm({
   onSuccess,
   onCancel,
 }: ProfileFormProps) {
-  const [state, formAction, isPending] = useActionState(
-    updateProfile,
-    initialState,
-  );
-
   const [editor, setEditor] = useState(() =>
     createInitialEditorState(config, {
       avatarType: DEFAULT_AVATAR_TYPE,
       avatarColor: DEFAULT_AVATAR_MOOD,
     }),
   );
-
-  useEffect(() => {
-    if (!state.success) return;
-    toast.success("Perfil actualizado.", { id: "profile-updated" });
-    onSuccess?.();
-  }, [state, onSuccess]);
+  const [formError, setFormError] = useState<string>();
+  const [isPending, startTransition] = useTransition();
 
   const ui = useMemo(
     () => getProfileEditorUi(config, editor),
@@ -84,8 +71,20 @@ export default function ProfileForm({
 
   function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
-    startTransition(() => {
-      formAction(editor);
+
+    startTransition(async () => {
+      setFormError(undefined);
+      const result = await updateProfile({}, editor);
+
+      if (result.success) {
+        toast.success("Perfil actualizado.", { id: "profile-updated" });
+        onSuccess?.();
+        return;
+      }
+
+      if (result.error) {
+        setFormError(result.error);
+      }
     });
   }
 
@@ -306,7 +305,9 @@ export default function ProfileForm({
         ) : null}
       </section>
 
-      {state.error ? <ErrorMessage>{state.error}</ErrorMessage> : null}
+      {formError ? <ErrorMessage>{formError}</ErrorMessage> : null}
+
+      <ProfileDeleteUser disabled={isPending} />
 
       <div className="flex flex-col gap-3">
         <Button

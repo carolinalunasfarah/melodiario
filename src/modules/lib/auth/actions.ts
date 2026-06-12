@@ -25,6 +25,7 @@ import {
   updateUserById,
   createDiaryEntry as createDiaryEntryService,
   updateDiaryEntryById,
+  deleteUserById,
 } from "@/src/modules/lib/supabase/data-service";
 
 export async function signInWithGoogle() {
@@ -166,6 +167,22 @@ export async function updateProfile(
   }
 }
 
+export async function deleteUser() {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { error: "Debes tener una sesión activa para eliminar tu cuenta." };
+  }
+
+  try {
+    await deleteUserById(session.user.id);
+  } catch (error) {
+    console.error(error);
+    return { error: "No se pudo eliminar tu cuenta. Inténtalo de nuevo." };
+  }
+
+  await signOut({ redirectTo: "/" });
+}
+
 export async function updateDiaryEntry(
   _prevState: DiaryFormState,
   payload: DiaryEntryUpdatePayload,
@@ -173,7 +190,9 @@ export async function updateDiaryEntry(
   const session = await auth();
 
   if (!session?.user?.id) {
-    return { error: "Debes tener una sesión activa para actualizar un registro." };
+    return {
+      error: "Debes tener una sesión activa para actualizar un registro.",
+    };
   }
 
   const { entryId, mood, comment } = payload;

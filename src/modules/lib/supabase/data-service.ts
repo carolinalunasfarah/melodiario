@@ -71,6 +71,15 @@ export async function updateUserById(id: string, data: ProfileUpdateInput) {
   return updatedUser;
 }
 
+export async function deleteUserById(id: string) {
+  const { error } = await supabase.from("users").delete().eq("id", id);
+
+  if (error) {
+    console.error(error);
+    throw new Error("No se pudo eliminar la cuenta.");
+  }
+}
+
 export async function getDiaryEntriesByUserId(
   userId: string,
 ): Promise<DiaryEntry[]> {

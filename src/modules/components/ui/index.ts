@@ -37,6 +37,20 @@ export {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
 } from "./DropdownMenu";
+export {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogOverlay,
+  AlertDialogPortal,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./AlertDialog";
 export { Input } from "./Input";
 export { Label } from "./Label";
 export { Switch } from "./Switch";

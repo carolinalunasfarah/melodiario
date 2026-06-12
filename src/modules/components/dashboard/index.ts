@@ -10,6 +10,7 @@ export { default as DiaryMoodBadge } from "./DiaryMoodBadge";
 export { default as DiarySection } from "./DiarySection";
 export { default as DiarySpotifySearch } from "./DiarySpotifySearch";
 export { default as ProfileForm } from "./ProfileForm";
+export { default as ProfileDeleteUser } from "./ProfileDeleteUser";
 
 export * from "./types";
 export * from "./constants";
