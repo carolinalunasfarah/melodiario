@@ -79,7 +79,9 @@ export default function HowItWorksSection({ open }: HowItWorksSectionProps) {
                     </span>
                     <CardContent className="pt-8 pb-4 text-start sm:px-6">
                       <CardTitle className="mb-3">{step.title}</CardTitle>
-                      <CardDescription>{step.description}</CardDescription>
+                      <CardDescription className="text-md">
+                        {step.description}
+                      </CardDescription>
                     </CardContent>
                   </Card>
                 </motion.li>

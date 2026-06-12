@@ -58,24 +58,24 @@ export const RING_AVATARS: RingAvatarItem[] = [
 
 export const STEPS = [
   {
-    title: "Crea tu cuenta",
+    title: "Inicia sesión",
     description:
-      "Regístrate, puedes usar Google o tu email y crear una contraseña, de esta forma podemos mantener un registro de tu diario que siempre podrás consultar.",
+      "Puedes hacerlo con Google o tu email y contraseña, de esta forma podrás acceder a tu diario y a tus registros.",
   },
   {
-    title: "Registra cada día",
+    title: "Sintonía diaria",
     description:
-      "En tu calendario podrás registrar la canción que más resuene contigo a diario, accediendo a un resumen mensual que puedes compartir en donde quieras.",
+      "Registra la canción que más resuene contigo a diario, elige un mood, opcionalmente puedes escribir un comentario sobre cómo te sentiste.",
   },
   {
-    title: "Privacidad primero",
+    title: "Espacio seguro",
     description:
-      "Si te preocupa tu privacidad y datos, ¡que no te preocupe! nadie más que tú tendrá acceso a tu calendario, y nuestra base de datos está resguardada con altos estándares de seguridad.",
+      "Tus registros y perfil son completamente tuyos. Nadie más tiene acceso a tu diario y tu información está resguardada bajo máxima seguridad.",
   },
   {
     title: "Tú decides",
     description:
-      "Puedes borrar la cuenta cuando tú quieras, sólo recuerda que toda tu información, diario incluido, serán eliminados y que te echaremos mucho de menos.",
+      "Puedes borrar la cuenta cuando quieras, sólo recuerda que toda tu información, registros incluidos, serán eliminados y que te echaremos mucho de menos.",
   },
 ] as const;
 
