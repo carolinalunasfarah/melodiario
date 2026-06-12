@@ -1,8 +1,8 @@
-import type { DiaryEntry } from "@/src/modules/components/dashboard";
 import type { SpotifyTrack } from "./types";
+import { WritableDiaryEntryFields } from "../supabase/types";
 
 export type DiarySpotifyFields = Pick<
-  DiaryEntry,
+  WritableDiaryEntryFields,
   | "spotify_track_id"
   | "spotify_song_title"
   | "spotify_song_artist"
@@ -18,7 +18,7 @@ export function getTrackAlbumCover(track: SpotifyTrack): string | null {
   return track.album.images[0]?.url ?? null;
 }
 
-/** Maps a search result to diary form fields until save is implemented. */
+/** Maps a search result to diary form fields */
 export function diaryFieldsFromTrack(track: SpotifyTrack): DiarySpotifyFields {
   return {
     spotify_track_id: track.id,

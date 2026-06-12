@@ -25,12 +25,13 @@ function DiaryAlbumCover({
 
   return (
     <>
-      <div className="relative aspect-square w-full max-w-[200px] overflow-hidden rounded-2xl border border-brand-accent/20">
+      <div className="relative aspect-square w-full max-w-[200px] overflow-hidden rounded-2xl">
         <Image
           src={albumCover}
           alt={`Carátula de ${title}`}
           fill
           sizes="200px"
+          priority
           className="object-cover"
         />
       </div>

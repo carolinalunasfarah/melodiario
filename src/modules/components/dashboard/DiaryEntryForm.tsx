@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { startTransition, useState, type SyntheticEvent } from "react";
 import { isPast, isToday } from "date-fns";
 import { toDateKey } from "@/src/modules/utils";
 import {
@@ -12,17 +12,31 @@ import type { SpotifyTrack } from "@/src/modules/lib/spotify/types";
 import { JOURNAL_MAX_LENGTH, MOOD_OPTIONS } from "./constants";
 import type { DiarySectionProps, MoodToken } from "./types";
 import {
-  DiarySpotifyHiddenInputs,
   DiarySpotifySearch,
   DiaryMoodBadge,
   DiaryAlbumCover,
 } from "@/src/modules/components/dashboard";
-import { Button, Textarea, Label } from "@/src/modules/components/ui";
+import {
+  Button,
+  Textarea,
+  Label,
+  ErrorMessage,
+} from "@/src/modules/components/ui";
+import type { WritableDiaryEntryFields } from "@/src/modules/lib/supabase/types";
+
+type DiaryEntryFormProps = DiarySectionProps & {
+  formAction: (entry: WritableDiaryEntryFields) => void;
+  isPending: boolean;
+  formError?: string;
+};
 
 export default function DiaryEntryForm({
   selectedDate,
   entry,
-}: DiarySectionProps) {
+  formAction,
+  isPending,
+  formError,
+}: DiaryEntryFormProps) {
   const [editingJournal, setEditingJournal] = useState(false);
   const [songQuery, setSongQuery] = useState("");
   const [selectedTrack, setSelectedTrack] = useState<SpotifyTrack | null>(null);
@@ -50,28 +64,26 @@ export default function DiaryEntryForm({
     setSongQuery(`${track.name} — ${formatTrackArtists(track)}`);
   }
 
+  function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!canCreate) return;
+    if (!selectedTrack || !mood) return;
+    const payload = {
+      date: toDateKey(selectedDate),
+      mood,
+      comment: comment.trim() || null,
+      ...diaryFieldsFromTrack(selectedTrack),
+    };
+    startTransition(() => {
+      formAction(payload);
+    });
+  }
+
   return (
     <form
       className="flex h-full flex-col gap-5 p-4 pt-2 sm:p-6 sm:pt-4"
-      onSubmit={(event) => event.preventDefault()}
+      onSubmit={handleSubmit}
     >
-      <input type="hidden" name="date" value={toDateKey(selectedDate)} />
-      {entry ? (
-        <>
-          <DiarySpotifyHiddenInputs track={entry} />
-          <input type="hidden" name="mood" value={entry.mood} />
-        </>
-      ) : (
-        selectedTrack && (
-          <DiarySpotifyHiddenInputs
-            track={diaryFieldsFromTrack(selectedTrack)}
-          />
-        )
-      )}
-      {canCreate && mood ? (
-        <input type="hidden" name="mood" value={mood} />
-      ) : null}
-
       <div className="flex flex-col gap-3">
         <Label htmlFor="song-search">Canción del día</Label>
         {canCreate ? (
@@ -106,11 +118,11 @@ export default function DiaryEntryForm({
       </div>
 
       <div className="flex flex-col gap-3">
-        <p className="text-xs font-semibold tracking-wide text-brand-text/80 uppercase">
+        <Label htmlFor="mood">
           {isPast(selectedDate)
             ? "La sintonía de tu día"
             : "Elige una sintonía para tu día"}
-        </p>
+        </Label>
         <div className="flex flex-wrap gap-2">
           {canCreate ? (
             MOOD_OPTIONS.map((option) => (
@@ -151,13 +163,14 @@ export default function DiaryEntryForm({
       </div>
 
       <div className="border-t border-brand-accent/10 pt-4">
+        {formError ? <ErrorMessage>{formError}</ErrorMessage> : null}
         {canCreate ? (
           <Button
             type="submit"
             className="w-full"
-            disabled={!selectedTrack || !mood}
+            disabled={!selectedTrack || !mood || isPending}
           >
-            Agregar
+            {isPending ? "Agregando..." : "Agregar"}
           </Button>
         ) : editingJournal ? (
           <div className="flex gap-2">

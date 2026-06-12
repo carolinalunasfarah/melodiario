@@ -8,7 +8,6 @@ export { default as DiaryAlbumCover } from "./DiaryAlbumCover";
 export { default as DiaryEntryForm } from "./DiaryEntryForm";
 export { default as DiaryMoodBadge } from "./DiaryMoodBadge";
 export { default as DiarySection } from "./DiarySection";
-export { default as DiarySpotifyHiddenInputs } from "./DiarySpotifyHiddenInputs";
 export { default as DiarySpotifySearch } from "./DiarySpotifySearch";
 export { default as ProfileForm } from "./ProfileForm";
 

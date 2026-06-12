@@ -1,10 +1,13 @@
 import type { AvatarColor, AvatarSource, AvatarType } from "../supabase/types";
 import type { UserProfileKind } from "../supabase/utils";
 
-export type ProfileFormState = {
+export type ActionFormState = {
   error?: string;
   success?: boolean;
 };
+
+export type ProfileFormState = ActionFormState;
+export type DiaryFormState = ActionFormState;
 
 export type ProfileFormConfig = {
   kind: UserProfileKind;

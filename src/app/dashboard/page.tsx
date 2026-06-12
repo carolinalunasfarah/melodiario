@@ -3,7 +3,10 @@ import {
   DashboardUserMenu,
 } from "@/src/modules/components/dashboard";
 import { auth } from "@/src/modules/lib/auth/auth";
-import { getUserById } from "@/src/modules/lib/supabase/data-service";
+import {
+  getDiaryEntriesByUserId,
+  getUserById,
+} from "@/src/modules/lib/supabase/data-service";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -18,7 +21,10 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const user = await getUserById(session.user.id);
+  const [user, entries] = await Promise.all([
+    getUserById(session.user.id),
+    getDiaryEntriesByUserId(session.user.id),
+  ]);
 
   if (!user) {
     redirect("/login");
@@ -32,7 +38,7 @@ export default async function DashboardPage() {
         </h1>
         <DashboardUserMenu user={user} sessionImage={session.user.image} />
       </div>
-      <DashboardContent />
+      <DashboardContent entries={entries} />
     </div>
   );
 }

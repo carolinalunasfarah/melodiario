@@ -40,3 +40,26 @@ export type ProfileUpdateInput = Pick<
   | "avatar_color"
   | "avatar_external_url"
 >;
+
+export type DiaryEntry = {
+  id: string;
+  created_at: string;
+  date: string;
+  mood: AvatarColor;
+  comment?: string | null;
+  spotify_track_id: string;
+  spotify_song_title: string;
+  spotify_song_artist: string;
+  spotify_song_album_cover: string;
+  spotify_external_url: string;
+  user_id: string;
+};
+
+export type WritableDiaryEntryFields = Omit<
+  DiaryEntry,
+  "id" | "created_at" | "user_id"
+>;
+
+export type DiaryEntryInsert = WritableDiaryEntryFields & {
+  user_id: string;
+};

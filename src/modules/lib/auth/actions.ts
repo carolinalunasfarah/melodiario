@@ -9,14 +9,23 @@ import { resolveGoogleAvatarUrl } from "./profileAvatar";
 import { isAllowedAvatarExternalUrl, NICKNAME_MAX_LENGTH } from "./constants";
 import { LOGIN_FORM_ERRORS } from "./loginErrors";
 import { isValidEmail } from "@/src/modules/utils";
-import type { ProfileEditorState, ProfileFormState } from "./types";
+import type {
+  DiaryFormState,
+  ProfileEditorState,
+  ProfileFormState,
+} from "./types";
 import { getUserProfileKind } from "@/src/modules/lib/supabase/utils";
-import type { SupabaseUser } from "@/src/modules/lib/supabase/types";
+import type {
+  SupabaseUser,
+  WritableDiaryEntryFields,
+  DiaryEntryInsert,
+} from "@/src/modules/lib/supabase/types";
 import {
   createUser,
   getUserByEmail,
   getUserById,
   updateUserById,
+  createDiaryEntry as createDiaryEntryService,
 } from "@/src/modules/lib/supabase/data-service";
 
 function validateProfileEditor(
@@ -189,5 +198,29 @@ export async function updateProfile(
   } catch (error) {
     console.error(error);
     return { error: "No se pudo actualizar tu perfil. Inténtalo de nuevo." };
+  }
+}
+
+export async function createDiaryEntry(
+  _prevState: DiaryFormState,
+  entry: WritableDiaryEntryFields,
+): Promise<DiaryFormState> {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return { error: "Debes tener una sesión activa para crear un registro." };
+  }
+
+  const newEntry: DiaryEntryInsert = {
+    ...entry,
+    user_id: session.user.id,
+  };
+
+  try {
+    await createDiaryEntryService(newEntry);
+    revalidatePath("/dashboard", "layout");
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error: "No se pudo crear el registro. Inténtalo de nuevo." };
   }
 }

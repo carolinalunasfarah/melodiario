@@ -1,5 +1,11 @@
 import { supabase } from "./supabase";
-import { ProfileUpdateInput, SupabaseUser, WritableUserFields } from "./types";
+import {
+  DiaryEntry,
+  DiaryEntryInsert,
+  ProfileUpdateInput,
+  SupabaseUser,
+  WritableUserFields,
+} from "./types";
 
 export async function getUserByEmail(
   email: string,
@@ -62,4 +68,36 @@ export async function updateUserById(id: string, data: ProfileUpdateInput) {
   }
 
   return updatedUser;
+}
+
+export async function getDiaryEntriesByUserId(
+  userId: string,
+): Promise<DiaryEntry[]> {
+  const { data, error } = await supabase
+    .from("diary_entries")
+    .select("*")
+    .eq("user_id", userId)
+    .order("date", { ascending: false });
+
+  if (error) {
+    console.error(error);
+    throw new Error("No se pudieron cargar los registros del diario.");
+  }
+
+  return data ?? [];
+}
+
+export async function createDiaryEntry(entry: DiaryEntryInsert) {
+  const { data, error } = await supabase
+    .from("diary_entries")
+    .insert(entry)
+    .select()
+    .single();
+
+  if (error) {
+    console.error(error);
+    throw new Error("No se pudo crear el registro.");
+  }
+
+  return data;
 }

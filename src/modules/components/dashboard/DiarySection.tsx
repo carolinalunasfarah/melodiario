@@ -1,16 +1,32 @@
 "use client";
 
+import { useActionState, useEffect } from "react";
 import { isFuture, isToday } from "date-fns";
+import { toast } from "sonner";
+import { createDiaryEntry } from "@/src/modules/lib/auth/actions";
+import type { DiaryFormState } from "@/src/modules/lib/auth/types";
 import { toDateKey, formatDateStringCapitalized } from "@/src/modules/utils";
 import {
   DiaryEntryForm,
   type DiarySectionProps,
 } from "@/src/modules/components/dashboard";
 
+const initialState: DiaryFormState = {};
+
 export default function DiarySection({
   selectedDate,
   entry,
 }: DiarySectionProps) {
+  const [state, formAction, isPending] = useActionState(
+    createDiaryEntry,
+    initialState,
+  );
+
+  useEffect(() => {
+    if (!state.success) return;
+    toast.success("Registro guardado.", { id: "diary-entry-created" });
+  }, [state]);
+
   const future = isFuture(selectedDate);
   const hasEntry = Boolean(entry);
   const showForm = isToday(selectedDate) || hasEntry;
@@ -34,6 +50,9 @@ export default function DiarySection({
             key={toDateKey(selectedDate)}
             selectedDate={selectedDate}
             entry={entry}
+            formAction={formAction}
+            isPending={isPending}
+            formError={state.error}
           />
         ) : (
           <p className="flex h-full w-full items-center justify-center text-md text-brand-text/80">

@@ -1,8 +1,12 @@
 "use client";
 
+import { useMemo } from "react";
+import { parse } from "date-fns";
 import { DayPicker } from "react-day-picker";
 import { es } from "react-day-picker/locale";
 import "@daypicker/react/style.css";
+import type { DiaryEntry } from "@/src/modules/lib/supabase/types";
+import { toDateKey } from "@/src/modules/utils";
 import { cn } from "@/src/modules/utils/styles";
 import {
   CalendarNavigation,
@@ -12,10 +16,23 @@ import {
 export default function Calendar({
   selected,
   onSelect,
+  entries = [],
 }: {
   selected?: Date;
   onSelect?: (date: Date | undefined) => void;
+  entries?: DiaryEntry[];
 }) {
+  const entriesByDate = useMemo(
+    () => new Map(entries.map((entry) => [entry.date, entry])),
+    [entries],
+  );
+
+  const entryDates = useMemo(
+    () =>
+      entries.map((entry) => parse(entry.date, "yyyy-MM-dd", new Date())),
+    [entries],
+  );
+
   return (
     <div>
       <DayPicker
@@ -26,6 +43,7 @@ export default function Calendar({
         mode="single"
         selected={selected}
         onSelect={onSelect}
+        modifiers={{ hasEntry: entryDates }}
         numberOfMonths={1}
         showOutsideDays
         className={cn(
@@ -63,6 +81,9 @@ export default function Calendar({
           DayButton: ({ day, modifiers, ...props }) => (
             <CalendarDayButton
               modifiers={modifiers}
+              albumCover={
+                entriesByDate.get(toDateKey(day.date))?.spotify_song_album_cover
+              }
               className={props.className ?? ""}
               {...props}
             >
