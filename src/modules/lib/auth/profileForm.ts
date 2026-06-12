@@ -5,6 +5,10 @@ import type {
   SupabaseUser,
 } from "../supabase/types";
 import { getUserProfileKind } from "../supabase/utils";
+import {
+  isAllowedAvatarExternalUrl,
+  NICKNAME_MAX_LENGTH,
+} from "./constants";
 import { resolveGoogleAvatarUrl } from "./profileAvatar";
 import type { ProfileEditorState, ProfileFormConfig } from "./types";
 
@@ -129,6 +133,37 @@ export function hasProfileFormChanges(
   );
 
   return !profileFieldsEqual(saved, target);
+}
+
+/** Server-side checks for payloads that bypass the UI. */
+export function getProfileUpdateError(
+  editor: ProfileEditorState,
+  user: SupabaseUser,
+  sessionImage?: string | null,
+): string | null {
+  if (editor.nickname.length > NICKNAME_MAX_LENGTH) {
+    return `El nombre no puede tener más de ${NICKNAME_MAX_LENGTH} caracteres.`;
+  }
+
+  const saved = profileFieldsFrom({ source: "user", user, sessionImage });
+  const target = resolveProfileTarget(
+    saved,
+    {
+      kind: getUserProfileKind(user),
+      googleAvatarUrl: resolveGoogleAvatarUrl(user, sessionImage),
+    },
+    editor,
+  );
+
+  if (
+    target.avatar_source === "google" &&
+    target.avatar_external_url &&
+    !isAllowedAvatarExternalUrl(target.avatar_external_url)
+  ) {
+    return "La foto de perfil no es válida.";
+  }
+
+  return null;
 }
 
 export function buildProfileUpdate(
