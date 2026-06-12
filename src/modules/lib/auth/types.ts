@@ -1,4 +1,9 @@
-import type { AvatarColor, AvatarSource, AvatarType } from "../supabase/types";
+import type {
+  AvatarColor,
+  AvatarSource,
+  AvatarType,
+  DiaryEntryUpdateInput,
+} from "../supabase/types";
 import type { UserProfileKind } from "../supabase/utils";
 
 export type ActionFormState = {
@@ -28,4 +33,8 @@ export type ProfileEditorState = {
   avatarIntent: AvatarEditIntent;
   avatarType: AvatarType;
   avatarColor: AvatarColor;
+};
+
+export type DiaryEntryUpdatePayload = DiaryEntryUpdateInput & {
+  entryId: string;
 };

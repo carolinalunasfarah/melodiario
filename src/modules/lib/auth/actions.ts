@@ -4,13 +4,12 @@ import { AuthError } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { auth, signIn, signOut } from "./auth";
 import { hashPassword } from "./password";
-import {
-  buildProfileUpdate,
-  getProfileUpdateError,
-} from "./profileForm";
+import { buildProfileUpdate, getProfileUpdateError } from "./profileForm";
 import { LOGIN_FORM_ERRORS } from "./loginErrors";
 import { isValidEmail } from "@/src/modules/utils";
+import { getDiaryUpdateError } from "./diaryForm";
 import type {
+  DiaryEntryUpdatePayload,
   DiaryFormState,
   ProfileEditorState,
   ProfileFormState,
@@ -25,6 +24,7 @@ import {
   getUserById,
   updateUserById,
   createDiaryEntry as createDiaryEntryService,
+  updateDiaryEntryById,
 } from "@/src/modules/lib/supabase/data-service";
 
 export async function signInWithGoogle() {
@@ -163,6 +163,34 @@ export async function updateProfile(
   } catch (error) {
     console.error(error);
     return { error: "No se pudo actualizar tu perfil. Inténtalo de nuevo." };
+  }
+}
+
+export async function updateDiaryEntry(
+  _prevState: DiaryFormState,
+  payload: DiaryEntryUpdatePayload,
+): Promise<DiaryFormState> {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return { error: "Debes tener una sesión activa para actualizar un registro." };
+  }
+
+  const { entryId, mood, comment } = payload;
+  const updateData = { mood, comment: comment?.trim() || null };
+
+  const validationError = getDiaryUpdateError(updateData);
+  if (validationError) {
+    return { error: validationError };
+  }
+
+  try {
+    await updateDiaryEntryById(entryId, session.user.id, updateData);
+    revalidatePath("/dashboard", "layout");
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { error: "No se pudo actualizar el registro. Inténtalo de nuevo." };
   }
 }
 

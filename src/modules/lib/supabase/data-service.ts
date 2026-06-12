@@ -2,6 +2,7 @@ import { supabase } from "./supabase";
 import {
   DiaryEntry,
   DiaryEntryInsert,
+  DiaryEntryUpdateInput,
   ProfileUpdateInput,
   SupabaseUser,
   WritableUserFields,
@@ -100,4 +101,25 @@ export async function createDiaryEntry(entry: DiaryEntryInsert) {
   }
 
   return data;
+}
+
+export async function updateDiaryEntryById(
+  id: string,
+  userId: string,
+  data: DiaryEntryUpdateInput,
+) {
+  const { data: updatedEntry, error } = await supabase
+    .from("diary_entries")
+    .update(data)
+    .eq("id", id)
+    .eq("user_id", userId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error(error);
+    throw new Error("No se pudo actualizar el registro.");
+  }
+
+  return updatedEntry;
 }

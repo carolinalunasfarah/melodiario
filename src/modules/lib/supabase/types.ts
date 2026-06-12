@@ -63,3 +63,8 @@ export type WritableDiaryEntryFields = Omit<
 export type DiaryEntryInsert = WritableDiaryEntryFields & {
   user_id: string;
 };
+
+export type DiaryEntryUpdateInput = Pick<
+  WritableDiaryEntryFields,
+  "mood" | "comment"
+>;

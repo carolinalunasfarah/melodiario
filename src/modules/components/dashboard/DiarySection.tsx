@@ -1,31 +1,68 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useState, useTransition } from "react";
 import { isFuture, isToday } from "date-fns";
 import { toast } from "sonner";
-import { createDiaryEntry } from "@/src/modules/lib/auth/actions";
-import type { DiaryFormState } from "@/src/modules/lib/auth/types";
+import {
+  createDiaryEntry,
+  updateDiaryEntry,
+} from "@/src/modules/lib/auth/actions";
+import type { DiaryEntryUpdatePayload } from "@/src/modules/lib/auth/types";
 import { toDateKey, formatDateStringCapitalized } from "@/src/modules/utils";
+import type { WritableDiaryEntryFields } from "@/src/modules/lib/supabase/types";
 import {
   DiaryEntryForm,
   type DiarySectionProps,
 } from "@/src/modules/components/dashboard";
 
-const initialState: DiaryFormState = {};
-
 export default function DiarySection({
   selectedDate,
   entry,
 }: DiarySectionProps) {
-  const [state, formAction, isPending] = useActionState(
-    createDiaryEntry,
-    initialState,
-  );
+  const [isEditing, setIsEditing] = useState(false);
+  const [formError, setFormError] = useState<string>();
+  const [isPending, startTransition] = useTransition();
+  const selectedDateKey = toDateKey(selectedDate);
+  const [prevSelectedDateKey, setPrevSelectedDateKey] = useState(selectedDateKey);
 
-  useEffect(() => {
-    if (!state.success) return;
-    toast.success("Registro guardado.", { id: "diary-entry-created" });
-  }, [state]);
+  if (prevSelectedDateKey !== selectedDateKey) {
+    setPrevSelectedDateKey(selectedDateKey);
+    setIsEditing(false);
+    setFormError(undefined);
+  }
+
+  function handleCreate(entryPayload: WritableDiaryEntryFields) {
+    startTransition(async () => {
+      setFormError(undefined);
+      const result = await createDiaryEntry({}, entryPayload);
+
+      if (result.success) {
+        toast.success("Registro guardado.", { id: "diary-entry-created" });
+        return;
+      }
+
+      if (result.error) {
+        setFormError(result.error);
+      }
+    });
+  }
+
+  function handleUpdate(payload: DiaryEntryUpdatePayload) {
+    startTransition(async () => {
+      setFormError(undefined);
+      const result = await updateDiaryEntry({}, payload);
+
+      if (result.success) {
+        toast.success("Registro actualizado.", { id: "diary-entry-updated" });
+        setIsEditing(false);
+        return;
+      }
+
+      if (result.error) {
+        setFormError(result.error);
+      }
+    });
+  }
 
   const future = isFuture(selectedDate);
   const hasEntry = Boolean(entry);
@@ -47,12 +84,15 @@ export default function DiarySection({
       <div className="flex min-h-0 flex-1 flex-col">
         {showForm ? (
           <DiaryEntryForm
-            key={toDateKey(selectedDate)}
+            key={selectedDateKey}
             selectedDate={selectedDate}
             entry={entry}
-            formAction={formAction}
+            isEditing={isEditing}
+            onEditingChange={setIsEditing}
+            onCreate={handleCreate}
+            onUpdate={handleUpdate}
             isPending={isPending}
-            formError={state.error}
+            formError={formError}
           />
         ) : (
           <p className="flex h-full w-full items-center justify-center text-md text-brand-text/80">

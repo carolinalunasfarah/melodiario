@@ -9,8 +9,10 @@ import {
   Turntable,
 } from "@/src/modules/components/avatars";
 
-export const JOURNAL_MAX_LENGTH = 100;
-export { NICKNAME_MAX_LENGTH } from "@/src/modules/lib/auth/constants";
+export {
+  JOURNAL_MAX_LENGTH,
+  NICKNAME_MAX_LENGTH,
+} from "@/src/modules/lib/auth/constants";
 
 export const MOOD_OPTIONS: {
   id: MoodToken;

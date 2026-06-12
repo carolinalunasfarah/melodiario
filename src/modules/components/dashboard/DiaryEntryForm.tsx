@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition, useState, type SyntheticEvent } from "react";
+import { useState, type SyntheticEvent } from "react";
 import { isPast, isToday } from "date-fns";
 import { toDateKey } from "@/src/modules/utils";
 import {
@@ -9,6 +9,7 @@ import {
   getTrackAlbumCover,
 } from "@/src/modules/lib/spotify/utils";
 import type { SpotifyTrack } from "@/src/modules/lib/spotify/types";
+import type { DiaryEntryUpdatePayload } from "@/src/modules/lib/auth/types";
 import { JOURNAL_MAX_LENGTH, MOOD_OPTIONS } from "./constants";
 import type { DiarySectionProps, MoodToken } from "./types";
 import {
@@ -25,7 +26,10 @@ import {
 import type { WritableDiaryEntryFields } from "@/src/modules/lib/supabase/types";
 
 type DiaryEntryFormProps = DiarySectionProps & {
-  formAction: (entry: WritableDiaryEntryFields) => void;
+  isEditing: boolean;
+  onEditingChange: (editing: boolean) => void;
+  onCreate: (entry: WritableDiaryEntryFields) => void;
+  onUpdate: (payload: DiaryEntryUpdatePayload) => void;
   isPending: boolean;
   formError?: string;
 };
@@ -33,19 +37,22 @@ type DiaryEntryFormProps = DiarySectionProps & {
 export default function DiaryEntryForm({
   selectedDate,
   entry,
-  formAction,
+  isEditing,
+  onEditingChange,
+  onCreate,
+  onUpdate,
   isPending,
   formError,
 }: DiaryEntryFormProps) {
-  const [editingJournal, setEditingJournal] = useState(false);
   const [songQuery, setSongQuery] = useState("");
   const [selectedTrack, setSelectedTrack] = useState<SpotifyTrack | null>(null);
-  const [mood, setMood] = useState<MoodToken | null>(null);
-  const [comment, setComment] = useState(entry?.comment ?? "");
+  const [createMood, setCreateMood] = useState<MoodToken | null>(null);
+  const [createComment, setCreateComment] = useState("");
+  const [editMood, setEditMood] = useState<MoodToken | null>(null);
+  const [editComment, setEditComment] = useState("");
 
   const canCreate = isToday(selectedDate) && !entry;
-  const activeMood = entry?.mood ?? mood;
-  const journalEditable = canCreate || editingJournal;
+  const canEditEntry = Boolean(entry) && !canCreate;
   const albumCover =
     entry?.spotify_song_album_cover ??
     (selectedTrack ? getTrackAlbumCover(selectedTrack) : null);
@@ -53,6 +60,13 @@ export default function DiaryEntryForm({
     entry?.spotify_external_url ?? selectedTrack?.external_urls.spotify ?? null;
   const songTitle =
     entry?.spotify_song_title ?? selectedTrack?.name ?? "la canción";
+
+  const hasEditChanges =
+    isEditing &&
+    entry &&
+    editMood !== null &&
+    (editMood !== entry.mood ||
+      (editComment.trim() || null) !== (entry.comment?.trim() || null));
 
   function handleSongQueryChange(value: string) {
     setSongQuery(value);
@@ -64,19 +78,37 @@ export default function DiaryEntryForm({
     setSongQuery(`${track.name} — ${formatTrackArtists(track)}`);
   }
 
+  function startEditing() {
+    if (!entry) return;
+    setEditMood(entry.mood);
+    setEditComment(entry.comment ?? "");
+    onEditingChange(true);
+  }
+
   function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!canCreate) return;
-    if (!selectedTrack || !mood) return;
-    const payload = {
-      date: toDateKey(selectedDate),
-      mood,
-      comment: comment.trim() || null,
-      ...diaryFieldsFromTrack(selectedTrack),
-    };
-    startTransition(() => {
-      formAction(payload);
-    });
+
+    if (canCreate) {
+      if (!selectedTrack || !createMood) return;
+
+      const payload = {
+        date: toDateKey(selectedDate),
+        mood: createMood,
+        comment: createComment.trim() || null,
+        ...diaryFieldsFromTrack(selectedTrack),
+      };
+
+      onCreate(payload);
+      return;
+    }
+
+    if (isEditing && entry && editMood) {
+      onUpdate({
+        entryId: entry.id,
+        mood: editMood,
+        comment: editComment.trim() || null,
+      });
+    }
   }
 
   return (
@@ -129,30 +161,53 @@ export default function DiaryEntryForm({
               <DiaryMoodBadge
                 key={option.id}
                 moodId={option.id}
-                selected={mood === option.id}
-                onSelect={setMood}
+                selected={createMood === option.id}
+                onSelect={setCreateMood}
               />
             ))
-          ) : activeMood ? (
-            <DiaryMoodBadge moodId={activeMood} selected readOnly />
+          ) : isEditing ? (
+            MOOD_OPTIONS.map((option) => (
+              <DiaryMoodBadge
+                key={option.id}
+                moodId={option.id}
+                selected={editMood === option.id}
+                onSelect={setEditMood}
+              />
+            ))
+          ) : entry?.mood ? (
+            <DiaryMoodBadge moodId={entry.mood} selected readOnly />
           ) : null}
         </div>
       </div>
 
       <div className="flex flex-1 flex-col gap-3">
         <Label htmlFor="comment">Bitácora privada (opcional)</Label>
-        {journalEditable ? (
+        {canCreate ? (
           <>
             <Textarea
               id="comment"
               name="comment"
-              value={comment}
+              value={createComment}
               maxLength={JOURNAL_MAX_LENGTH}
-              onChange={(event) => setComment(event.target.value)}
+              onChange={(event) => setCreateComment(event.target.value)}
               placeholder="Cuéntale a tu diario qué pasó hoy..."
             />
             <p className="text-right text-xs text-brand-text/45">
-              {comment.length}/{JOURNAL_MAX_LENGTH}
+              {createComment.length}/{JOURNAL_MAX_LENGTH}
+            </p>
+          </>
+        ) : isEditing ? (
+          <>
+            <Textarea
+              id="comment"
+              name="comment"
+              value={editComment}
+              maxLength={JOURNAL_MAX_LENGTH}
+              onChange={(event) => setEditComment(event.target.value)}
+              placeholder="Cuéntale a tu diario qué pasó hoy..."
+            />
+            <p className="text-right text-xs text-brand-text/45">
+              {editComment.length}/{JOURNAL_MAX_LENGTH}
             </p>
           </>
         ) : (
@@ -168,36 +223,33 @@ export default function DiaryEntryForm({
           <Button
             type="submit"
             className="w-full"
-            disabled={!selectedTrack || !mood || isPending}
+            disabled={!selectedTrack || !createMood || isPending}
           >
             {isPending ? "Agregando..." : "Agregar"}
           </Button>
-        ) : editingJournal ? (
+        ) : isEditing ? (
           <div className="flex gap-2">
             <Button
               type="button"
               variant="outline"
               className="flex-1"
-              onClick={() => {
-                setComment(entry?.comment ?? "");
-                setEditingJournal(false);
-              }}
+              onClick={() => onEditingChange(false)}
             >
               Cancelar
             </Button>
-            <Button type="submit" className="flex-1">
-              Guardar
+            <Button
+              type="submit"
+              className="flex-1"
+              disabled={!hasEditChanges || !editMood || isPending}
+            >
+              {isPending ? "Guardando..." : "Guardar"}
             </Button>
           </div>
-        ) : (
-          <Button
-            type="button"
-            className="w-full"
-            onClick={() => setEditingJournal(true)}
-          >
-            Editar bitácora
+        ) : canEditEntry ? (
+          <Button type="button" className="w-full" onClick={startEditing}>
+            Editar registro
           </Button>
-        )}
+        ) : null}
       </div>
     </form>
   );

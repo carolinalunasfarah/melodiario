@@ -1,4 +1,5 @@
 export const NICKNAME_MAX_LENGTH = 24;
+export const JOURNAL_MAX_LENGTH = 100;
 
 const GOOGLE_AVATAR_URL_PREFIX = "https://lh3.googleusercontent.com/";
 
