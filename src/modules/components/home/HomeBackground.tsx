@@ -53,19 +53,12 @@ export default function HomeBackground() {
       aria-hidden
       viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
       preserveAspectRatio="xMidYMax slice"
-      className="pointer-events-none fixed inset-0 z-0 h-[100dvh] w-full"
+      className="pointer-events-none fixed inset-0 z-0 h-[dvh] w-full"
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
         {WAVE_GRADIENTS.map(({ id, stops }) => (
-          <linearGradient
-            key={id}
-            id={id}
-            x1="0%"
-            y1="50%"
-            x2="100%"
-            y2="50%"
-          >
+          <linearGradient key={id} id={id} x1="0%" y1="50%" x2="100%" y2="50%">
             {stops.map(({ offset, color }) => (
               <stop key={offset} offset={offset} stopColor={color} />
             ))}
