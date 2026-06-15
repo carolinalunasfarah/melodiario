@@ -53,7 +53,7 @@ export default function HomeBackground() {
       aria-hidden
       viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
       preserveAspectRatio="xMidYMax slice"
-      className="pointer-events-none fixed inset-0 z-0 h-[dvh] w-full"
+      className="pointer-events-none absolute inset-0 z-0 size-full min-h-dvh"
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
