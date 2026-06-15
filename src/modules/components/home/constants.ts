@@ -60,22 +60,22 @@ export const STEPS = [
   {
     title: "Inicia sesión",
     description:
-      "Puedes hacerlo con Google o tu email y contraseña, de esta forma podrás acceder a tu diario y a tus registros.",
+      "Accede con Google o tu correo, de esta forma podrás acceder a espacio personal y mantener tus registros siempre sincronizados.",
   },
   {
-    title: "Sintonía diaria",
+    title: "La canción del día",
     description:
-      "Registra la canción que más resuene contigo a diario, elige un mood, opcionalmente puedes escribir un comentario sobre cómo te sentiste.",
+      "Utiliza el buscador para encontrar y conectar con esa canción especial que le dio ritmo y sonido a tu día.",
   },
   {
-    title: "Espacio seguro",
+    title: "Sintonía y bitácora",
     description:
-      "Tus registros y perfil son completamente tuyos. Nadie más tiene acceso a tu diario y tu información está resguardada bajo máxima seguridad.",
+      "Elige una sintonía que mejor represente tu día, opcionalmente puedes escribir un comentario para guardar alguna frase especial.",
   },
   {
-    title: "Tú decides",
+    title: "Comparte tu diario",
     description:
-      "Puedes borrar la cuenta cuando quieras, sólo recuerda que toda tu información, registros incluidos, serán eliminados y que te echaremos mucho de menos.",
+      "Descarga y comparte tu postal diaria para compartir donde quieras, con quien quieras y cuando quieras.",
   },
 ] as const;
 
