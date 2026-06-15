@@ -7,6 +7,7 @@ export { default as DashboardUserMenu } from "./DashboardUserMenu";
 export { default as DiaryAlbumCover } from "./DiaryAlbumCover";
 export { default as DiaryEntryForm } from "./DiaryEntryForm";
 export { default as DiaryMoodBadge } from "./DiaryMoodBadge";
+export { default as DiaryShareDialog } from "./DiaryShareDialog";
 export { default as DiarySection } from "./DiarySection";
 export { default as DiarySpotifySearch } from "./DiarySpotifySearch";
 export { default as ProfileForm } from "./ProfileForm";
