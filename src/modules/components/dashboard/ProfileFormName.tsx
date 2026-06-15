@@ -24,7 +24,7 @@ export default function ProfileFormName({
 }: ProfileFormNameProps) {
   return (
     <section className="flex flex-col gap-3">
-      <Label className="text-brand-text">Nombre</Label>
+      <Label>Nombre</Label>
 
       {config.kind === "google" ? (
         <div className="flex flex-wrap items-center justify-between gap-3">

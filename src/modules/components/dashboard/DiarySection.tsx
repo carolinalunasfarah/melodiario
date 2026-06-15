@@ -72,6 +72,8 @@ export default function DiarySection({
   const emptyMessage = future
     ? "Te esperamos para este día"
     : "No tienes ningún registro para este día";
+  const showDiaryHint =
+    (isToday(selectedDate) && !hasEntry) || (hasEntry && !isEditing);
 
   return (
     <aside className="flex flex-1 flex-col rounded-2xl bg-brand-surface sm:min-h-0">
@@ -92,6 +94,14 @@ export default function DiarySection({
           />
         ) : null}
       </header>
+      {showDiaryHint ? (
+        <p className="px-4 pt-1 text-sm leading-relaxed text-brand-text/80 sm:px-6">
+          {isToday(selectedDate) && !hasEntry
+            ? "Al guardar el registro de hoy, la canción quedará fija. Podrás editar la sintonía y bitácora cuando quieras."
+            : "Recuerda que puedes editar la sintonía y la bitácora privada cuando quieras."}
+        </p>
+      ) : null}
+
       <div className="flex min-h-0 flex-1 flex-col">
         {showForm ? (
           <DiaryEntryForm

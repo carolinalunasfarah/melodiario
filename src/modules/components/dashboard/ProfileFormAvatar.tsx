@@ -39,7 +39,7 @@ export default function ProfileFormAvatar({
 }: ProfileFormAvatarProps) {
   return (
     <section className="flex flex-col gap-3">
-      <Label className="text-brand-text">Avatar</Label>
+      <Label>Avatar</Label>
 
       {ui.showGoogleAvatarDefault && config.googleAvatarUrl ? (
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -66,9 +66,7 @@ export default function ProfileFormAvatar({
         </div>
       ) : null}
 
-      {ui.showCustomAvatarSummary &&
-      config.avatarType &&
-      config.avatarColor ? (
+      {ui.showCustomAvatarSummary && config.avatarType && config.avatarColor ? (
         <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
