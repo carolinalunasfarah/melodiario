@@ -182,32 +182,23 @@ export default function DiaryEntryForm({
 
       <div className="flex flex-1 flex-col gap-3">
         <Label htmlFor="comment">Bitácora privada (opcional)</Label>
-        {canCreate ? (
+        {canCreate || isEditing ? (
           <>
             <Textarea
               id="comment"
               name="comment"
-              value={createComment}
+              value={canCreate ? createComment : editComment}
               maxLength={JOURNAL_MAX_LENGTH}
-              onChange={(event) => setCreateComment(event.target.value)}
+              onChange={(event) =>
+                (canCreate ? setCreateComment : setEditComment)(
+                  event.target.value,
+                )
+              }
               placeholder="Cuéntale a tu diario qué pasó hoy..."
             />
             <p className="text-right text-xs text-brand-text/45">
-              {createComment.length}/{JOURNAL_MAX_LENGTH}
-            </p>
-          </>
-        ) : isEditing ? (
-          <>
-            <Textarea
-              id="comment"
-              name="comment"
-              value={editComment}
-              maxLength={JOURNAL_MAX_LENGTH}
-              onChange={(event) => setEditComment(event.target.value)}
-              placeholder="Cuéntale a tu diario qué pasó hoy..."
-            />
-            <p className="text-right text-xs text-brand-text/45">
-              {editComment.length}/{JOURNAL_MAX_LENGTH}
+              {(canCreate ? createComment : editComment).length}/
+              {JOURNAL_MAX_LENGTH}
             </p>
           </>
         ) : (
