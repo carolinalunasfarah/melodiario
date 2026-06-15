@@ -15,6 +15,7 @@ import {
 import {
   Button,
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -62,6 +63,8 @@ export default function DiaryShareDialog({
   function handleDownload() {
     void exportAndDownload(cardRef.current, dateKey);
   }
+
+  const isBusy = isDownloading || isSharing;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -114,26 +117,61 @@ export default function DiaryShareDialog({
           />
         </div>
 
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <Button
-            type="button"
-            variant={showShareButton ? "outline" : "default"}
-            className="flex-1"
-            disabled={isDownloading}
-            onClick={handleDownload}
-          >
-            {isDownloading ? "Descargando..." : "Descargar"}
-          </Button>
+        <div className="flex flex-col gap-2">
           {showShareButton ? (
-            <Button
-              type="button"
-              className="flex-1"
-              disabled={isSharing}
-              onClick={handleShare}
-            >
-              {isSharing ? "Compartiendo..." : "Compartir"}
-            </Button>
-          ) : null}
+            <>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1"
+                  disabled={isDownloading}
+                  onClick={handleDownload}
+                >
+                  {isDownloading ? "Descargando..." : "Descargar"}
+                </Button>
+                <Button
+                  type="button"
+                  className="flex-1"
+                  disabled={isSharing}
+                  onClick={handleShare}
+                >
+                  {isSharing ? "Compartiendo..." : "Compartir"}
+                </Button>
+              </div>
+              <DialogClose asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  disabled={isBusy}
+                >
+                  Cancelar
+                </Button>
+              </DialogClose>
+            </>
+          ) : (
+            <div className="flex gap-2">
+              <DialogClose asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1"
+                  disabled={isBusy}
+                >
+                  Cancelar
+                </Button>
+              </DialogClose>
+              <Button
+                type="button"
+                className="flex-1"
+                disabled={isDownloading}
+                onClick={handleDownload}
+              >
+                {isDownloading ? "Descargando..." : "Descargar"}
+              </Button>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
