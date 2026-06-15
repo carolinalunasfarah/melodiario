@@ -100,3 +100,5 @@ export function getProfileEditorUi(
       editor.avatarIntent === "pick_custom",
   };
 }
+
+export type ProfileEditorUi = ReturnType<typeof getProfileEditorUi>;

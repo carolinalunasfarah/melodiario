@@ -57,3 +57,4 @@ export { Switch } from "./Switch";
 export { Textarea } from "./Textarea";
 export { ErrorMessage } from "./ErrorMessage";
 export { Toaster } from "./Sonner";
+export { Separator } from "./Separator";
