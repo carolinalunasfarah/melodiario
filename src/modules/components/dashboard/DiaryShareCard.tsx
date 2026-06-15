@@ -68,7 +68,7 @@ const DiaryShareCard = forwardRef<HTMLDivElement, DiaryShareCardProps>(
             </div>
 
             <div className="flex items-center justify-center gap-3.5">
-              <span>Melodiario</span>
+              <span>melodiario.vercel.app</span>
               <img
                 src="/icon.png"
                 alt="Melodiario logo"
