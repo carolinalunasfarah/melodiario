@@ -60,28 +60,28 @@ export const STEPS = [
   {
     title: "Inicia sesión",
     description:
-      "Accede con Google o tu correo, de esta forma podrás acceder a espacio personal y mantener tus registros siempre sincronizados.",
+      "Accede con Google o tu correo, de esta forma podrás acceder a tu espacio personal y mantener tus registros siempre sincronizados.",
   },
   {
     title: "La canción del día",
     description:
-      "Utiliza el buscador para encontrar y conectar con esa canción especial que le dio ritmo y sonido a tu día.",
+      "Para registrarla, utiliza el buscador para encontrar aquella canción especial que resonó contigo y le dio ritmo y sonido a tu día.",
   },
   {
     title: "Sintonía y bitácora",
     description:
-      "Elige una sintonía que mejor represente tu día, opcionalmente puedes escribir un comentario para guardar alguna frase especial.",
+      "Elige la sintonía que mejor represente tu día, opcionalmente puedes escribir un comentario para guardar alguna frase especial.",
   },
   {
     title: "Comparte tu diario",
     description:
-      "Descarga y comparte tu postal diaria para compartir donde quieras, con quien quieras y cuando quieras.",
+      "Descarga y comparte tu postal diaria, podrás hacerlo donde quieras, con quien quieras y cuando quieras.",
   },
 ] as const;
 
 export const STEP_COLORS = [
   "bg-mood-happiness",
+  "bg-mood-sadness",
   "bg-mood-surprise",
-  "bg-mood-anxiety",
   "bg-mood-rage",
 ] as const;
