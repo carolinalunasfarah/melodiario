@@ -8,29 +8,40 @@ import {
   CardDescription,
   CardTitle,
 } from "@/src/modules/components/ui";
-import { cn } from "@/src/modules/utils";
-import { STEPS, STEP_COLORS } from "./constants";
+import { STEPS } from "./constants";
 import { HowItWorksSectionProps } from "./types";
 
-export default function HowItWorksSection({ open }: HowItWorksSectionProps) {
-  const sectionRef = useRef<HTMLElement>(null);
+const EXPAND_DURATION_MS = 450;
 
+export default function HowItWorksSection({
+  open,
+  scrollTargetRef,
+}: HowItWorksSectionProps) {
+  const sectionRef = useRef<HTMLElement>(null);
   const wasOpenRef = useRef(false);
 
   useEffect(() => {
-    const isOpening = open && !wasOpenRef.current;
+    const wasOpen = wasOpenRef.current;
     wasOpenRef.current = open;
 
-    if (!isOpening) return;
+    if (open && !wasOpen) {
+      const timer = window.setTimeout(() => {
+        sectionRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, EXPAND_DURATION_MS);
 
-    const timer = window.setTimeout(() => {
-      sectionRef.current?.scrollIntoView({
+      return () => window.clearTimeout(timer);
+    }
+
+    if (!open && wasOpen) {
+      scrollTargetRef.current?.scrollIntoView({
         behavior: "smooth",
         block: "start",
       });
-    }, 80);
-    return () => window.clearTimeout(timer);
-  }, [open]);
+    }
+  }, [open, scrollTargetRef]);
 
   return (
     <AnimatePresence>
@@ -38,18 +49,18 @@ export default function HowItWorksSection({ open }: HowItWorksSectionProps) {
         <motion.section
           ref={sectionRef}
           id="how-it-works"
-          className="scroll-mt-8 overflow-hidden bg-brand-accent px-6 py-16 sm:py-20"
-          initial={{ opacity: 0, y: 56 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 32 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="scroll-mt-8 overflow-hidden px-6 pt-4 pb-16 sm:pb-20"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="mx-auto flex max-w-6xl flex-col gap-10">
             <motion.h2
-              className="text-center text-2xl font-bold text-brand-background sm:text-3xl"
-              initial={{ opacity: 0, y: 20 }}
+              className="text-center text-2xl font-bold text-brand-text sm:text-3xl"
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: 0.1 }}
+              transition={{ duration: 0.35, delay: 0.05 }}
             >
               ¿Cómo funciona?
             </motion.h2>
@@ -59,20 +70,17 @@ export default function HowItWorksSection({ open }: HowItWorksSectionProps) {
                 <motion.li
                   key={step.title}
                   className="pt-8"
-                  initial={{ opacity: 0, y: 40 }}
+                  initial={{ opacity: 0, y: 24 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{
-                    duration: 0.45,
-                    delay: 0.15 + index * 0.08,
+                    duration: 0.4,
+                    delay: 0.08 + index * 0.06,
                     ease: [0.22, 1, 0.36, 1],
                   }}
                 >
                   <Card className="relative h-full overflow-visible shadow-lg shadow-gray-950/50 ring-0">
                     <span
-                      className={cn(
-                        "absolute top-0 left-5 z-10 flex size-14 -translate-y-1/2 items-center justify-center rounded-full text-2xl font-bold text-brand-background",
-                        STEP_COLORS[index],
-                      )}
+                      className="absolute top-0 left-5 z-10 flex size-12 -translate-y-1/2 items-center justify-center rounded-full bg-brand-accent text-lg font-bold text-brand-background"
                       aria-hidden
                     >
                       {index + 1}

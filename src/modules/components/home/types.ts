@@ -1,4 +1,4 @@
-import { ComponentType } from "react";
+import { ComponentType, RefObject } from "react";
 import type { AvatarProps } from "@/src/modules/components/avatars";
 
 export type RingAvatarItem = {
@@ -11,4 +11,5 @@ export type RingAvatarItem = {
 
 export type HowItWorksSectionProps = {
   open: boolean;
+  scrollTargetRef: RefObject<HTMLElement | null>;
 };

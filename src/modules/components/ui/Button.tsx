@@ -9,13 +9,13 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-brand-accent text-brand-background hover:bg-brand-accent/90",
+          "bg-brand-accent text-brand-background hover:bg-brand-accent/85",
         outline:
           "border border-brand-text/30 bg-transparent text-brand-text hover:border-brand-accent hover:text-brand-accent",
         ghost:
           "bg-transparent text-brand-text hover:bg-brand-surface hover:text-brand-accent",
         destructive:
-          "bg-system-destructive text-brand-background hover:bg-system-destructive/90",
+          "bg-system-destructive text-brand-background hover:bg-system-destructive/85",
       },
       size: {
         default: "h-10 gap-1.5 px-5 py-2.5",

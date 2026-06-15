@@ -60,7 +60,7 @@ export const STEPS = [
   {
     title: "Inicia sesión",
     description:
-      "Accede con Google o tu correo, de esta forma podrás acceder a tu espacio personal y mantener tus registros siempre sincronizados.",
+      "Ingresa con Google o tu correo, de esta forma podrás acceder a tu espacio personal y mantener tus registros siempre sincronizados.",
   },
   {
     title: "La canción del día",
@@ -77,11 +77,4 @@ export const STEPS = [
     description:
       "Descarga y comparte tu postal diaria, podrás hacerlo donde quieras, con quien quieras y cuando quieras.",
   },
-] as const;
-
-export const STEP_COLORS = [
-  "bg-mood-happiness",
-  "bg-mood-sadness",
-  "bg-mood-surprise",
-  "bg-mood-rage",
 ] as const;
