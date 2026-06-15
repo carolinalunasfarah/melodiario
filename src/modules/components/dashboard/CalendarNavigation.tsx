@@ -29,7 +29,7 @@ export default function CalendarNavigation(props: NavigationProps) {
 
   return (
     <div
-      className={cn(className, "flex items-center justify-between gap-2")}
+      className={cn(className, "flex items-center justify-between")}
       {...divProps}
     >
       <Button

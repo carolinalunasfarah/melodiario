@@ -1,13 +1,15 @@
 "use client";
 
 import Image from "next/image";
+import { XIcon } from "lucide-react";
 import {
   formatTrackArtists,
   getTrackAlbumCover,
 } from "@/src/modules/lib/spotify/utils";
 import type { SpotifyTrack } from "@/src/modules/lib/spotify/types";
 import { useSpotifyTrackSearch } from "./hooks/useSpotifyTrackSearch";
-import { Input } from "@/src/modules/components/ui/Input";
+import { Input, ErrorMessage, Button } from "@/src/modules/components/ui";
+import { cn } from "@/src/modules/utils/styles";
 
 type DiarySpotifySearchProps = {
   query: string;
@@ -43,16 +45,28 @@ export default function DiarySpotifySearch({
       <div className="relative">
         <Input
           id="song-search"
-          type="search"
+          type="text"
           value={query}
           onChange={(event) => handleQueryChange(event.target.value)}
           placeholder="Buscar en Spotify..."
           autoComplete="off"
-          className="pr-11"
+          className={cn(query ? "pr-16" : "pr-11")}
         />
+        {query ? (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label="Limpiar búsqueda"
+            onClick={() => handleQueryChange("")}
+            className="absolute top-1/2 right-9 size-7 -translate-y-1/2 hover:bg-brand-accent/20"
+          >
+            <XIcon className="size-4" />
+          </Button>
+        ) : null}
         <Image
           src="/spotify_white_logo.svg"
-          alt=""
+          alt="Spotify white logo"
           width={21}
           height={21}
           aria-hidden
@@ -62,9 +76,7 @@ export default function DiarySpotifySearch({
       {isSearching ? (
         <p className="text-xs text-brand-text/50">Buscando...</p>
       ) : null}
-      {searchError ? (
-        <p className="text-xs text-system-error/90">{searchError}</p>
-      ) : null}
+      {searchError ? <ErrorMessage>{searchError}</ErrorMessage> : null}
       {visibleResults.length > 0 ? (
         <ul className="overflow-hidden rounded-xl border border-brand-accent/20 bg-brand-background/60">
           {visibleResults.map((track) => {
@@ -72,10 +84,11 @@ export default function DiarySpotifySearch({
 
             return (
               <li key={track.id}>
-                <button
+                <Button
+                  variant="ghost"
                   type="button"
                   onClick={() => handleTrackSelect(track)}
-                  className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm text-brand-text transition-colors hover:bg-brand-accent/10"
+                  className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm transition-colors hover:bg-brand-accent/10 rounded-none h-full"
                 >
                   {albumCoverUrl ? (
                     <div className="relative size-10 overflow-hidden rounded-lg">
@@ -102,7 +115,7 @@ export default function DiarySpotifySearch({
                       {formatTrackArtists(track)}
                     </span>
                   </span>
-                </button>
+                </Button>
               </li>
             );
           })}

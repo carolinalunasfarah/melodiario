@@ -15,7 +15,7 @@ export default function DashboardContent({ entries }: DashboardContentProps) {
     entries.find((item) => item.date === toDateKey(selectedDate)) ?? null;
 
   return (
-    <section className="grid grid-cols-1 gap-8 lg:grid-cols-5">
+    <section className="grid grid-cols-1 gap-6 lg:grid-cols-5">
       <div className="min-w-0 lg:col-span-3">
         <Calendar
           selected={selectedDate}
