@@ -77,12 +77,12 @@ export default function DiarySection({
 
   return (
     <aside className="flex flex-1 flex-col rounded-2xl bg-brand-surface sm:min-h-0">
-      <header className="flex items-start justify-between gap-3 pt-4 pr-4 pl-4 sm:pt-6 sm:pr-6 sm:pl-6">
+      <header className="flex items-start justify-between gap-3 pt-4 px-4 sm:pt-6 sm:px-6">
         <div className="min-w-0 space-y-1">
           <p className="text-sm font-semibold tracking-wide text-brand-accent uppercase">
             Diario
           </p>
-          <h2 className="text-base font-semibold text-brand-text sm:text-lg">
+          <h2 className="text-base sm:text-lg font-semibold text-brand-text ">
             {formatDateStringCapitalized(selectedDate)}
           </h2>
         </div>
@@ -95,7 +95,7 @@ export default function DiarySection({
         ) : null}
       </header>
       {showDiaryHint ? (
-        <p className="px-4 pt-1 text-sm leading-relaxed text-brand-text/80 sm:px-6">
+        <p className="px-4 py-2 text-sm leading-relaxed text-brand-text/80 sm:px-6">
           {isToday(selectedDate) && !hasEntry
             ? "Al guardar el registro de hoy, la canción quedará fija. Podrás editar la sintonía y bitácora cuando quieras."
             : "Recuerda que puedes editar la sintonía y la bitácora privada cuando quieras."}

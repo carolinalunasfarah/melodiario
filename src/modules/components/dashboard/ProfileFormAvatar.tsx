@@ -48,7 +48,7 @@ export default function ProfileFormAvatar({
               avatar={{ kind: "image", url: config.googleAvatarUrl }}
               displayName={config.displayName}
             />
-            <p className="text-sm text-brand-text/70">Foto de Google</p>
+            <p className="text-xs text-brand-text/80">Foto de Google</p>
           </div>
           <Label
             htmlFor="pick_custom_avatar"
@@ -84,7 +84,7 @@ export default function ProfileFormAvatar({
               htmlFor="edit_custom_avatar"
               className="font-normal normal-case"
             >
-              <span>Editar</span>
+              <span className="text-xs text-brand-text/80">Editar</span>
               <Switch
                 id="edit_custom_avatar"
                 checked={avatarIntent === "pick_custom"}
@@ -108,7 +108,9 @@ export default function ProfileFormAvatar({
                 htmlFor="use_google_avatar"
                 className="font-normal normal-case"
               >
-                <span>Usar esta foto</span>
+                <span className="text-xs text-brand-text/80">
+                  Usar esta foto
+                </span>
                 <Switch
                   id="use_google_avatar"
                   checked={avatarIntent === "use_google"}
@@ -124,10 +126,10 @@ export default function ProfileFormAvatar({
 
       {ui.showAvatarPicker && avatarIntent !== "use_google" ? (
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-3">
-            <span className="text-xs font-medium tracking-wide text-brand-text/70 uppercase">
+          <div className="flex flex-col gap-4 mt-4">
+            <Label htmlFor="pick_custom_avatar" className="text-xs">
               Elige un avatar
-            </span>
+            </Label>
             <div className="grid grid-cols-7 gap-2">
               {PROFILE_AVATAR_OPTIONS.map(({ type, label, Component }) => (
                 <Button
@@ -154,10 +156,10 @@ export default function ProfileFormAvatar({
             </div>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <span className="text-xs font-medium tracking-wide text-brand-text/70 uppercase">
+          <div className="flex flex-col gap-4 mt-4">
+            <Label htmlFor="pick_custom_color" className="text-xs">
               Elige un color
-            </span>
+            </Label>
             <div className="grid grid-cols-7 gap-2">
               {MOOD_OPTIONS.map(({ id, label, colorClass }) => (
                 <Button

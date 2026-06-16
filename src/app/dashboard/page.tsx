@@ -31,9 +31,9 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-6 py-12 ">
+    <div className="mx-auto max-w-7xl px-6 py-12">
       <div className="mb-8 flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="mb-4 text-center text-2xl font-bold text-brand-text sm:mb-0 sm:text-left">
+        <h1 className="mb-4 text-center text-2xl font-bold sm:mb-0 sm:text-left">
           ¡Te damos la bienvenida!
         </h1>
         <DashboardUserMenu user={user} sessionImage={session.user.image} />

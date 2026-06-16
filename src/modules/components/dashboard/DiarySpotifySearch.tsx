@@ -70,11 +70,11 @@ export default function DiarySpotifySearch({
           width={21}
           height={21}
           aria-hidden
-          className="absolute top-1/2 right-3 min-h-[21px] min-w-[21px] -translate-y-1/2"
+          className="absolute top-1/2 right-3 -translate-y-1/2"
         />
       </div>
       {isSearching ? (
-        <p className="text-xs text-brand-text/50">Buscando...</p>
+        <p className="text-sm text-brand-text/80">Buscando...</p>
       ) : null}
       {searchError ? <ErrorMessage>{searchError}</ErrorMessage> : null}
       {visibleResults.length > 0 ? (
@@ -94,7 +94,7 @@ export default function DiarySpotifySearch({
                     <div className="relative size-10 overflow-hidden rounded-lg">
                       <Image
                         src={albumCoverUrl}
-                        alt=""
+                        alt="Album cover"
                         fill
                         sizes="40px"
                         className="object-cover"
@@ -108,10 +108,10 @@ export default function DiarySpotifySearch({
                     />
                   )}
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate font-medium">
+                    <span className="block truncate font-light">
                       {track.name}
                     </span>
-                    <span className="block truncate text-brand-text">
+                    <span className="block truncate">
                       {formatTrackArtists(track)}
                     </span>
                   </span>

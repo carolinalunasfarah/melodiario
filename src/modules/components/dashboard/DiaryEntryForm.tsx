@@ -10,6 +10,7 @@ import {
 } from "@/src/modules/lib/spotify/utils";
 import type { SpotifyTrack } from "@/src/modules/lib/spotify/types";
 import type { DiaryEntryUpdatePayload } from "@/src/modules/lib/auth/types";
+import type { WritableDiaryEntryFields } from "@/src/modules/lib/supabase/types";
 import { JOURNAL_MAX_LENGTH, MOOD_OPTIONS } from "./constants";
 import type { DiarySectionProps, MoodToken } from "./types";
 import {
@@ -22,8 +23,8 @@ import {
   Textarea,
   Label,
   ErrorMessage,
+  Separator,
 } from "@/src/modules/components/ui";
-import type { WritableDiaryEntryFields } from "@/src/modules/lib/supabase/types";
 
 type DiaryEntryFormProps = DiarySectionProps & {
   isEditing: boolean;
@@ -181,7 +182,7 @@ export default function DiaryEntryForm({
       </div>
 
       <div className="flex flex-1 flex-col gap-3">
-        <Label htmlFor="comment">Bitácora privada (opcional)</Label>
+        <Label htmlFor="comment">Nota del día (opcional)</Label>
         {canCreate || isEditing ? (
           <>
             <Textarea
@@ -194,21 +195,23 @@ export default function DiaryEntryForm({
                   event.target.value,
                 )
               }
-              placeholder="Cuéntale a tu diario qué pasó hoy..."
+              placeholder="Algo breve que quieras registrar..."
             />
-            <p className="text-right text-xs text-brand-text/45">
+            <p className="text-right text-xs text-brand-text/60">
               {(canCreate ? createComment : editComment).length}/
               {JOURNAL_MAX_LENGTH}
             </p>
           </>
         ) : (
-          <p className="rounded-xl border border-brand-accent/10 bg-brand-background/20 px-3 py-2.5 text-sm leading-relaxed text-brand-text/75 italic">
-            {entry?.comment || "No se escribió ninguna bitácora."}
+          <p className="rounded-xl border border-brand-accent/20 bg-brand-background/20 px-3 py-2.5 text-sm leading-relaxed text-brand-text/75 italic">
+            {entry?.comment || "No se escribió ninguna nota."}
           </p>
         )}
       </div>
 
-      <div className="border-t border-brand-accent/10 pt-4">
+      <Separator className="bg-brand-accent/20" />
+
+      <div className="pt-2">
         {formError ? <ErrorMessage>{formError}</ErrorMessage> : null}
         {canCreate ? (
           <Button

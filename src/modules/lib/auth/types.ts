@@ -16,6 +16,7 @@ export type DiaryFormState = ActionFormState;
 
 export type ProfileFormConfig = {
   kind: UserProfileKind;
+  email: string;
   displayName: string;
   googleName: string | null;
   googleAvatarUrl: string | null;

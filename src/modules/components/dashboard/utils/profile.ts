@@ -63,6 +63,7 @@ export function getProfileFormConfig(
 
   return {
     kind,
+    email: user.email ?? "",
     displayName: getDisplayName(user),
     googleName: kind === "google" ? getFirstName(user.name) : null,
     googleAvatarUrl:

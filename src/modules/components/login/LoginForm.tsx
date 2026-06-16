@@ -70,7 +70,6 @@ export default function LoginForm() {
           placeholder="tu@email.com"
           required
           autoComplete="email"
-          className="bg-brand-accent/20 placeholder:text-brand-text/60"
         />
       </div>
 
@@ -86,7 +85,7 @@ export default function LoginForm() {
             placeholder="Tu contraseña de al menos 8 caracteres"
             required
             autoComplete="current-password"
-            className="bg-brand-accent/20 pr-10 placeholder:text-brand-text/60"
+            className="pr-10"
           />
           <Button
             type="button"
@@ -101,7 +100,7 @@ export default function LoginForm() {
             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
           </Button>
         </div>
-        <p className="text-sm text-brand-text/75 mt-2">
+        <p className="text-sm text-brand-text/80 mt-2">
           Por ahora no tenemos soporte para recuperar contraseñas, por favor
           guárdala en un lugar seguro.
         </p>

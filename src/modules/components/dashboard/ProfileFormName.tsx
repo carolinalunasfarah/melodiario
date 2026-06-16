@@ -24,8 +24,10 @@ export default function ProfileFormName({
 }: ProfileFormNameProps) {
   return (
     <section className="flex flex-col gap-3">
-      <Label>Nombre</Label>
+      <Label htmlFor="email">Email</Label>
+      <p className="text-sm text-brand-text/80">{config.email ?? "—"}</p>
 
+      <Label>Nombre</Label>
       {config.kind === "google" ? (
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-brand-text">{config.googleName ?? "—"}</p>
@@ -34,7 +36,9 @@ export default function ProfileFormName({
               htmlFor="use_custom_nickname"
               className="font-normal normal-case"
             >
-              <span>¿Prefieres otro nombre?</span>
+              <span className="text-xs text-brand-text/80">
+                ¿Prefieres otro nombre?
+              </span>
               <Switch
                 id="use_custom_nickname"
                 checked={nicknameOptIn}
@@ -56,7 +60,7 @@ export default function ProfileFormName({
             onChange={(event) => onNicknameChange(event.target.value)}
             placeholder="Escribe tu nombre para mostrar"
           />
-          <p className="text-right text-xs text-brand-text/45">
+          <p className="text-right text-xs text-brand-text/60">
             {nickname.length}/{NICKNAME_MAX_LENGTH}
           </p>
         </div>

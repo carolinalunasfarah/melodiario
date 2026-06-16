@@ -50,7 +50,7 @@ export default function ProfileFormDeleteUser({
           htmlFor="delete_account"
           className="shrink-0 font-normal normal-case"
         >
-          <span>Eliminar mi cuenta</span>
+          <span className="text-xs text-brand-text/80">Eliminar mi cuenta</span>
           <Switch
             id="delete_account"
             checked={showDeleteAccount}
@@ -67,7 +67,7 @@ export default function ProfileFormDeleteUser({
       </div>
 
       {showDeleteAccount ? (
-        <p className="text-sm text-brand-text/60">
+        <p className="text-sm text-brand-text/80">
           Esta acción es irreversible. Se borrarán tu perfil y todos tus
           registros del diario.
         </p>
