@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
+import { useState } from "react";
 import { Modifiers } from "@daypicker/react";
 import { cn } from "@/src/modules/utils/styles";
-import { Button } from "@/src/modules/components/ui";
+import { Button, Skeleton } from "@/src/modules/components/ui";
 
 export default function CalendarDayButton({
   children,
@@ -16,17 +18,15 @@ export default function CalendarDayButton({
   albumCover?: string;
   className: string;
 }) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const showAlbumCover = Boolean(albumCover && !modifiers.outside);
+
   return (
     <Button
       type="button"
       {...props}
-      style={
-        albumCover && !modifiers.outside
-          ? { backgroundImage: `url(${albumCover})` }
-          : undefined
-      }
       className={cn(
-        "border bg-cover bg-center font-semibold transition-transform hover:scale-105 rounded-lg sm:rounded-2xl",
+        "relative overflow-hidden border font-semibold transition-transform hover:scale-105 rounded-lg sm:rounded-2xl",
         modifiers.outside
           ? "border-brand-accent/10 bg-brand-background/20 text-brand-text/25 hover:scale-100"
           : "border-brand-accent/20 bg-brand-background/40 text-brand-text",
@@ -37,6 +37,24 @@ export default function CalendarDayButton({
         className,
       )}
     >
+      {showAlbumCover ? (
+        <>
+          {!imageLoaded ? (
+            <Skeleton className="absolute inset-0 rounded-[inherit]" />
+          ) : null}
+          <Image
+            src={albumCover!}
+            alt=""
+            fill
+            sizes="(max-width: 640px) 40px, 88px"
+            className={cn(
+              "object-cover transition-opacity duration-300",
+              imageLoaded ? "opacity-100" : "opacity-0",
+            )}
+            onLoad={() => setImageLoaded(true)}
+          />
+        </>
+      ) : null}
       <span
         className={cn(
           "absolute top-1 sm:top-2 left-1 sm:left-2 z-10 flex size-4 sm:size-6 items-center justify-center rounded-full bg-brand-background text-xs sm:text-base",
