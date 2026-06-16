@@ -4,9 +4,15 @@ import { useCallback, useState } from "react";
 import { toPng } from "html-to-image";
 import { toast } from "sonner";
 import { DIARY_SHARE_CARD_HEIGHT, DIARY_SHARE_CARD_WIDTH } from "../constants";
-import { buildShareFilename, downloadBlob } from "../utils";
+import {
+  buildShareFilename,
+  downloadBlob,
+  prepareShareCardImages,
+} from "../utils";
 
 async function exportCardToBlob(element: HTMLElement): Promise<Blob> {
+  await prepareShareCardImages(element);
+
   const dataUrl = await toPng(element, {
     width: DIARY_SHARE_CARD_WIDTH,
     height: DIARY_SHARE_CARD_HEIGHT,

@@ -32,6 +32,51 @@ export function buildShareFilename(dateKey: string) {
   return `melodiario-${dateKey}.png`;
 }
 
+function appendCacheBust(url: string): string {
+  try {
+    const parsed = new URL(url, window.location.href);
+    parsed.searchParams.set("_cb", String(Date.now()));
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+}
+
+function waitForImage(img: HTMLImageElement): Promise<void> {
+  if (img.complete && img.naturalWidth > 0) {
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve, reject) => {
+    img.addEventListener("load", () => resolve(), { once: true });
+    img.addEventListener(
+      "error",
+      () => reject(new Error("No se pudo cargar una imagen de la tarjeta.")),
+      { once: true },
+    );
+  });
+}
+
+export async function prepareShareCardImages(
+  element: HTMLElement,
+): Promise<void> {
+  const images = Array.from(element.querySelectorAll("img"));
+
+  await Promise.all(
+    images.map(async (img) => {
+      const src = img.getAttribute("src");
+      if (!src || src.startsWith("data:")) return;
+
+      if (/^https?:\/\//i.test(src)) {
+        img.crossOrigin = "anonymous";
+        img.src = appendCacheBust(src);
+      }
+
+      await waitForImage(img);
+    }),
+  );
+}
+
 export function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
