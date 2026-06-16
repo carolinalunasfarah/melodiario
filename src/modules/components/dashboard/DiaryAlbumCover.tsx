@@ -32,6 +32,7 @@ function DiaryAlbumCover({
           fill
           sizes="200px"
           priority
+          loading="eager"
           className="object-cover"
         />
       </div>

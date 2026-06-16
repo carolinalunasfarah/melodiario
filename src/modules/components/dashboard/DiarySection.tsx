@@ -97,8 +97,8 @@ export default function DiarySection({
       {showDiaryHint ? (
         <p className="px-4 py-2 text-sm leading-relaxed text-brand-text/80 sm:px-6">
           {isToday(selectedDate) && !hasEntry
-            ? "Al guardar el registro de hoy, la canción quedará fija. Podrás editar la sintonía y bitácora cuando quieras."
-            : "Recuerda que puedes editar la sintonía y la bitácora privada cuando quieras."}
+            ? "Al guardar el registro de hoy, la canción quedará fija. Podrás editar la sintonía y nota cuando quieras."
+            : "Recuerda que puedes editar la sintonía y la nota cuando quieras."}
         </p>
       ) : null}
 

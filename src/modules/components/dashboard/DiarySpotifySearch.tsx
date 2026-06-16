@@ -74,7 +74,7 @@ export default function DiarySpotifySearch({
         />
       </div>
       {isSearching ? (
-        <p className="text-sm text-brand-text/80">Buscando...</p>
+        <p className="text-sm text-brand-text/80 mt-2">Buscando...</p>
       ) : null}
       {searchError ? <ErrorMessage>{searchError}</ErrorMessage> : null}
       {visibleResults.length > 0 ? (
