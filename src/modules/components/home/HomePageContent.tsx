@@ -14,7 +14,7 @@ export default function HomePageContent() {
   const heroRef = useRef<HTMLElement>(null);
 
   return (
-    <div className="relative min-screen sm:min-h-dvh">
+    <div className="relative min-h-screen sm:min-h-dvh">
       <HomeBackground />
 
       <div className="relative z-10">
