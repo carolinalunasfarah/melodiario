@@ -12,10 +12,6 @@ async function exportCardToBlob(element: HTMLElement): Promise<Blob> {
     height: DIARY_SHARE_CARD_HEIGHT,
     pixelRatio: 1,
     cacheBust: true,
-    style: {
-      borderRadius: "1rem",
-      overflow: "hidden",
-    },
   });
 
   const response = await fetch(dataUrl);

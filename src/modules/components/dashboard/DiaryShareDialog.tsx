@@ -88,7 +88,7 @@ export default function DiaryShareDialog({
         </DialogHeader>
 
         <div
-          className="mx-auto overflow-hidden rounded-2xl"
+          className="mx-auto overflow-hidden"
           style={{
             width: PREVIEW_WIDTH,
             height: DIARY_SHARE_CARD_HEIGHT * PREVIEW_SCALE,

@@ -17,7 +17,7 @@ const DiaryShareCard = forwardRef<HTMLDivElement, DiaryShareCardProps>(
     return (
       <div
         ref={ref}
-        className="relative overflow-hidden rounded-2xl"
+        className="relative overflow-hidden"
         style={{
           width: DIARY_SHARE_CARD_WIDTH,
           height: DIARY_SHARE_CARD_HEIGHT,
