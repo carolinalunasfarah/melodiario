@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Button, ErrorMessage } from "@/src/modules/components/ui";
-import { LoginForm } from "@/src/modules/components/login";
+import { LoginForm, LoginTermsNotice } from "@/src/modules/components/login";
 import { signInWithGoogle } from "@/src/modules/lib/auth/actions";
 import { getLoginUrlErrorMessage } from "@/src/modules/lib/auth/loginErrors";
 import { Metadata } from "next";
@@ -26,6 +26,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           Accede con Google o con tu email. Si es tu primera vez, se creará tu
           cuenta automáticamente.
         </p>
+        <LoginTermsNotice />
       </div>
 
       {pageError ? (

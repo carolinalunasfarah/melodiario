@@ -16,6 +16,7 @@ import {
   ProfileForm,
   SupportForm,
 } from "@/src/modules/components/dashboard";
+import { TermsDialog } from "@/src/modules/components/terms";
 import {
   Button,
   Dialog,
@@ -42,6 +43,7 @@ export default function DashboardUserMenu({
 }: DashboardUserMenuProps) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
   const closeProfile = useCallback(() => setProfileOpen(false), []);
   const closeSupport = useCallback(() => setSupportOpen(false), []);
   const showIdentity = shouldShowHeaderIdentity(user);
@@ -62,10 +64,7 @@ export default function DashboardUserMenu({
         {showIdentity ? (
           <div className="flex items-center gap-2">
             {headerAvatar ? (
-              <AvatarDisplay
-                avatar={headerAvatar}
-                displayName={displayName}
-              />
+              <AvatarDisplay avatar={headerAvatar} displayName={displayName} />
             ) : null}
             {displayName ? (
               <span className="max-w-40 truncate text-sm font-medium text-brand-text">
@@ -93,11 +92,19 @@ export default function DashboardUserMenu({
             >
               Perfil
             </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem
               className="cursor-pointer focus:bg-brand-accent/15 focus:text-brand-text"
               onSelect={() => setSupportOpen(true)}
             >
               Soporte
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="cursor-pointer focus:bg-brand-accent/15 focus:text-brand-text"
+              onSelect={() => setTermsOpen(true)}
+            >
+              Términos y condiciones
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
@@ -147,6 +154,8 @@ export default function DashboardUserMenu({
           ) : null}
         </DialogContent>
       </Dialog>
+
+      <TermsDialog open={termsOpen} onOpenChange={setTermsOpen} />
     </>
   );
 }
