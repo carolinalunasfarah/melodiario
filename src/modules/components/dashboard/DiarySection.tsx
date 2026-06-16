@@ -76,7 +76,7 @@ export default function DiarySection({
     (isToday(selectedDate) && !hasEntry) || (hasEntry && !isEditing);
 
   return (
-    <aside className="flex flex-1 flex-col rounded-2xl bg-brand-surface sm:min-h-0">
+    <aside className="flex min-w-0 w-full flex-1 flex-col rounded-2xl bg-brand-surface sm:min-h-0">
       <header className="flex items-start justify-between gap-3 pt-4 px-4 sm:pt-6 sm:px-6">
         <div className="min-w-0 space-y-1">
           <p className="text-sm font-semibold tracking-wide text-brand-accent uppercase">
@@ -102,7 +102,7 @@ export default function DiarySection({
         </p>
       ) : null}
 
-      <div className="flex min-h-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         {showForm ? (
           <DiaryEntryForm
             key={selectedDateKey}

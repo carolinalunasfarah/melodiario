@@ -114,10 +114,10 @@ export default function DiaryEntryForm({
 
   return (
     <form
-      className="flex h-full flex-col gap-5 p-4 pt-2 sm:p-6 sm:pt-4"
+      className="flex h-full min-w-0 flex-col gap-5 p-4 pt-2 sm:p-6 sm:pt-4"
       onSubmit={handleSubmit}
     >
-      <div className="flex flex-col gap-3">
+      <div className="flex min-w-0 flex-col gap-3">
         <Label htmlFor="song-search">Canción del día</Label>
         {canCreate ? (
           <DiarySpotifySearch
@@ -127,7 +127,7 @@ export default function DiaryEntryForm({
             onTrackSelect={handleTrackSelect}
           />
         ) : (
-          <p className="text-sm font-medium text-brand-text">
+          <p className="min-w-0 text-sm font-medium wrap-break-word text-brand-text">
             {entry?.spotify_song_title ?? "Ninguna canción registrada"}
             {entry?.spotify_song_artist ? (
               <>

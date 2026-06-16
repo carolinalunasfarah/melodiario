@@ -41,8 +41,8 @@ export default function DiarySpotifySearch({
   }
 
   return (
-    <>
-      <div className="relative">
+    <div className="min-w-0">
+      <div className="relative min-w-0">
         <Input
           id="song-search"
           type="text"
@@ -78,20 +78,20 @@ export default function DiarySpotifySearch({
       ) : null}
       {searchError ? <ErrorMessage>{searchError}</ErrorMessage> : null}
       {visibleResults.length > 0 ? (
-        <ul className="overflow-hidden rounded-xl border border-brand-accent/20 bg-brand-background/60">
+        <ul className="mt-0 min-w-0 overflow-hidden rounded-xl border border-brand-accent/20 bg-brand-background/60">
           {visibleResults.map((track) => {
             const albumCoverUrl = getTrackAlbumCover(track);
 
             return (
-              <li key={track.id}>
+              <li key={track.id} className="min-w-0">
                 <Button
                   variant="ghost"
                   type="button"
                   onClick={() => handleTrackSelect(track)}
-                  className="flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm transition-colors hover:bg-brand-accent/10 rounded-none h-full"
+                  className="flex h-auto min-w-0 w-full items-start gap-3 rounded-none px-3 py-2.5 text-left text-sm transition-colors hover:bg-brand-accent/10"
                 >
                   {albumCoverUrl ? (
-                    <div className="relative size-10 overflow-hidden rounded-lg">
+                    <div className="relative size-10 shrink-0 overflow-hidden rounded-lg">
                       <Image
                         src={albumCoverUrl}
                         alt="Album cover"
@@ -107,11 +107,9 @@ export default function DiarySpotifySearch({
                       aria-hidden
                     />
                   )}
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate font-light">
-                      {track.name}
-                    </span>
-                    <span className="block truncate">
+                  <span className="min-w-0 flex-1 wrap-break-word">
+                    <span className="block font-light">{track.name}</span>
+                    <span className="block text-brand-text/80">
                       {formatTrackArtists(track)}
                     </span>
                   </span>
@@ -121,6 +119,6 @@ export default function DiarySpotifySearch({
           })}
         </ul>
       ) : null}
-    </>
+    </div>
   );
 }

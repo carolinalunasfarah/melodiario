@@ -23,7 +23,7 @@ export default function DashboardContent({ entries }: DashboardContentProps) {
           onSelect={(date) => date && setSelectedDate(date)}
         />
       </div>
-      <div className="flex h-full min-h-80 w-full lg:col-span-2 lg:min-h-0">
+      <div className="flex h-full min-h-80 w-full min-w-0 lg:col-span-2 lg:min-h-0">
         <DiarySection selectedDate={selectedDate} entry={entry} />
       </div>
     </section>
