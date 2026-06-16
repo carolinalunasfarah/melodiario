@@ -4,6 +4,7 @@ import {
   isCredentialsUser,
 } from "@/src/modules/lib/supabase/utils";
 import { resolveGoogleAvatarUrl } from "@/src/modules/lib/auth/profileAvatar";
+import { resolveSupportContactName } from "@/src/modules/lib/support/utils";
 import { getFirstName } from "@/src/modules/utils";
 import type {
   HeaderAvatar,
@@ -103,3 +104,13 @@ export function getProfileEditorUi(
 }
 
 export type ProfileEditorUi = ReturnType<typeof getProfileEditorUi>;
+
+export function getSupportFormDefaults(user: SupabaseUser): {
+  name: string;
+  email: string;
+} {
+  const email = user.email?.trim() ?? "";
+  const name = resolveSupportContactName(user) ?? "";
+
+  return { name, email };
+}

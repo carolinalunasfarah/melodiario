@@ -6,11 +6,16 @@ import {
   getDisplayName,
   getHeaderAvatar,
   getProfileFormConfig,
+  getSupportFormDefaults,
   shouldShowHeaderIdentity,
 } from "@/src/modules/components/dashboard/utils";
 import { cn } from "@/src/modules/utils/styles";
 import type { SupabaseUser } from "@/src/modules/lib/supabase/types";
-import { AvatarDisplay, ProfileForm } from "@/src/modules/components/dashboard";
+import {
+  AvatarDisplay,
+  ProfileForm,
+  SupportForm,
+} from "@/src/modules/components/dashboard";
 import {
   Button,
   Dialog,
@@ -36,11 +41,14 @@ export default function DashboardUserMenu({
   sessionImage,
 }: DashboardUserMenuProps) {
   const [profileOpen, setProfileOpen] = useState(false);
+  const [supportOpen, setSupportOpen] = useState(false);
   const closeProfile = useCallback(() => setProfileOpen(false), []);
+  const closeSupport = useCallback(() => setSupportOpen(false), []);
   const showIdentity = shouldShowHeaderIdentity(user);
   const headerAvatar = getHeaderAvatar(user, sessionImage);
   const displayName = getDisplayName(user);
   const profileConfig = getProfileFormConfig(user, sessionImage);
+  const supportDefaults = getSupportFormDefaults(user);
 
   return (
     <>
@@ -85,6 +93,12 @@ export default function DashboardUserMenu({
             >
               Perfil
             </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer focus:bg-brand-accent/15 focus:text-brand-text"
+              onSelect={() => setSupportOpen(true)}
+            >
+              Soporte
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               variant="destructive"
@@ -113,6 +127,24 @@ export default function DashboardUserMenu({
             onSuccess={closeProfile}
             onCancel={closeProfile}
           />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={supportOpen} onOpenChange={setSupportOpen}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Soporte</DialogTitle>
+            <DialogDescription>
+              Escríbenos si tienes dudas, problemas o sugerencias.
+            </DialogDescription>
+          </DialogHeader>
+          {supportOpen ? (
+            <SupportForm
+              name={supportDefaults.name}
+              email={supportDefaults.email}
+              onCancel={closeSupport}
+            />
+          ) : null}
         </DialogContent>
       </Dialog>
     </>

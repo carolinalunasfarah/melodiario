@@ -1,0 +1,2 @@
+export const SUPPORT_MESSAGE_MIN_LENGTH = 10;
+export const SUPPORT_MESSAGE_MAX_LENGTH = 500;
