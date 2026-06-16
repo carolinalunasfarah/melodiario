@@ -11,8 +11,6 @@ import {
 import { STEPS } from "./constants";
 import { HowItWorksSectionProps } from "./types";
 
-const EXPAND_DURATION_MS = 450;
-
 export default function HowItWorksSection({
   open,
   scrollTargetRef,
@@ -30,7 +28,7 @@ export default function HowItWorksSection({
           behavior: "smooth",
           block: "start",
         });
-      }, EXPAND_DURATION_MS);
+      }, 450);
 
       return () => window.clearTimeout(timer);
     }
@@ -49,7 +47,7 @@ export default function HowItWorksSection({
         <motion.section
           ref={sectionRef}
           id="how-it-works"
-          className="scroll-mt-8 overflow-hidden px-6 pt-4 pb-16 sm:pb-20"
+          className="scroll-mt-8 overflow-hidden px-8 pt-24 sm:pt-4 pb-16 sm:pb-20"
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0, height: 0 }}
@@ -78,18 +76,16 @@ export default function HowItWorksSection({
                     ease: [0.22, 1, 0.36, 1],
                   }}
                 >
-                  <Card className="relative h-full overflow-visible shadow-lg shadow-gray-950/50 ring-0">
+                  <Card className="relative h-full overflow-visible shadow-lg shadow-gray-950 ring-0">
                     <span
                       className="absolute top-0 left-5 z-10 flex size-12 -translate-y-1/2 items-center justify-center rounded-full bg-brand-accent text-lg font-bold text-brand-background"
                       aria-hidden
                     >
                       {index + 1}
                     </span>
-                    <CardContent className="pt-8 pb-4 text-start sm:px-6">
+                    <CardContent className="pt-6 pb-4 text-start sm:px-6">
                       <CardTitle className="mb-3">{step.title}</CardTitle>
-                      <CardDescription className="text-md">
-                        {step.description}
-                      </CardDescription>
+                      <CardDescription>{step.description}</CardDescription>
                     </CardContent>
                   </Card>
                 </motion.li>

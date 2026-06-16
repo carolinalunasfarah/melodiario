@@ -14,11 +14,11 @@ export default function HomePageContent() {
   const heroRef = useRef<HTMLElement>(null);
 
   return (
-    <div className="relative min-h-dvh">
+    <div className="relative min-screen sm:min-h-dvh">
       <HomeBackground />
 
       <div className="relative z-10">
-        <div className="mx-auto max-w-7xl px-6 py-24 sm:px-0 sm:py-48">
+        <div className="mx-auto max-w-7xl px-6 pt-36 sm:px-0 sm:py-48">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16 sm:pl-12 pl-0 lg:pl-0">
             <section ref={heroRef} className="flex scroll-mt-8 flex-col gap-6">
               <p className="text-sm font-semibold tracking-wide text-brand-accent uppercase">
