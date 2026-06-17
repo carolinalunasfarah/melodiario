@@ -32,14 +32,8 @@ export function buildShareFilename(dateKey: string) {
   return `melodiario-${dateKey}.png`;
 }
 
-function appendCacheBust(url: string): string {
-  try {
-    const parsed = new URL(url, window.location.href);
-    parsed.searchParams.set("_cb", String(Date.now()));
-    return parsed.toString();
-  } catch {
-    return url;
-  }
+export function getProxiedImageUrl(imageUrl: string): string {
+  return `/api/proxy-image?url=${encodeURIComponent(imageUrl)}`;
 }
 
 function waitForImage(img: HTMLImageElement): Promise<void> {
@@ -57,23 +51,9 @@ function waitForImage(img: HTMLImageElement): Promise<void> {
   });
 }
 
-export async function prepareShareCardImages(
-  element: HTMLElement,
-): Promise<void> {
-  const images = Array.from(element.querySelectorAll("img"));
-
+export async function waitForShareCardImages(element: HTMLElement): Promise<void> {
   await Promise.all(
-    images.map(async (img) => {
-      const src = img.getAttribute("src");
-      if (!src || src.startsWith("data:")) return;
-
-      if (/^https?:\/\//i.test(src)) {
-        img.crossOrigin = "anonymous";
-        img.src = appendCacheBust(src);
-      }
-
-      await waitForImage(img);
-    }),
+    Array.from(element.querySelectorAll("img"), (img) => waitForImage(img)),
   );
 }
 

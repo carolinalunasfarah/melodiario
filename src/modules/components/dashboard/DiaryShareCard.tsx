@@ -1,11 +1,14 @@
 "use client";
 
 /* eslint-disable @next/next/no-img-element -- html-to-image export requires native img */
-import { forwardRef } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import type { DiaryEntry } from "@/src/modules/lib/supabase/types";
 import { formatDateStringCapitalized } from "@/src/modules/utils";
+import { cn } from "@/src/modules/utils/styles";
+import { Skeleton } from "@/src/modules/components/ui";
 import { DIARY_SHARE_CARD_HEIGHT, DIARY_SHARE_CARD_WIDTH } from "./constants";
 import DiaryShareBackground from "./DiaryShareBackground";
+import { getProxiedImageUrl } from "./utils/share";
 
 type DiaryShareCardProps = {
   entry: DiaryEntry;
@@ -14,6 +17,21 @@ type DiaryShareCardProps = {
 
 const DiaryShareCard = forwardRef<HTMLDivElement, DiaryShareCardProps>(
   function DiaryShareCard({ entry, selectedDate }, ref) {
+    const proxiedCoverUrl = entry.spotify_song_album_cover
+      ? getProxiedImageUrl(entry.spotify_song_album_cover)
+      : null;
+    const [coverLoaded, setCoverLoaded] = useState(false);
+    const coverRef = useRef<HTMLImageElement>(null);
+
+    useEffect(() => {
+      setCoverLoaded(false);
+
+      const image = coverRef.current;
+      if (image?.complete && image.naturalWidth > 0) {
+        setCoverLoaded(true);
+      }
+    }, [proxiedCoverUrl]);
+
     return (
       <div
         ref={ref}
@@ -48,12 +66,23 @@ const DiaryShareCard = forwardRef<HTMLDivElement, DiaryShareCardProps>(
           </div>
 
           <div className="relative mb-6 aspect-square w-full overflow-hidden rounded-2xl bg-brand-background/45">
-            <img
-              src={entry.spotify_song_album_cover}
-              alt={`Carátula de ${entry.spotify_song_title}`}
-              crossOrigin="anonymous"
-              className="size-full rounded-2xl object-cover"
-            />
+            {proxiedCoverUrl ? (
+              <>
+                {!coverLoaded ? (
+                  <Skeleton className="absolute inset-0 rounded-2xl bg-brand-background/60" />
+                ) : null}
+                <img
+                  ref={coverRef}
+                  src={proxiedCoverUrl}
+                  alt={`Carátula de ${entry.spotify_song_title}`}
+                  onLoad={() => setCoverLoaded(true)}
+                  className={cn(
+                    "size-full rounded-2xl object-cover transition-opacity duration-300",
+                    coverLoaded ? "opacity-100" : "opacity-0",
+                  )}
+                />
+              </>
+            ) : null}
           </div>
 
           <footer className="flex justify-between gap-3 text-2xl font-semibold text-brand-background">
@@ -70,7 +99,7 @@ const DiaryShareCard = forwardRef<HTMLDivElement, DiaryShareCardProps>(
             <div className="flex items-center justify-center gap-3.5">
               <span>melodiario.vercel.app</span>
               <img
-                src="/icon.png"
+                src="/melodiario_logo.svg"
                 alt="Melodiario logo"
                 width={36}
                 height={36}

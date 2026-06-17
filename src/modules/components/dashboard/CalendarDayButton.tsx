@@ -51,6 +51,7 @@ export default function CalendarDayButton({
               "object-cover transition-opacity duration-300",
               imageLoaded ? "opacity-100" : "opacity-0",
             )}
+            loading="eager"
             onLoad={() => setImageLoaded(true)}
           />
         </>

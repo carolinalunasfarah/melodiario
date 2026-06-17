@@ -1,27 +1,29 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { toPng } from "html-to-image";
+import { toBlob } from "html-to-image";
 import { toast } from "sonner";
 import { DIARY_SHARE_CARD_HEIGHT, DIARY_SHARE_CARD_WIDTH } from "../constants";
 import {
   buildShareFilename,
   downloadBlob,
-  prepareShareCardImages,
+  waitForShareCardImages,
 } from "../utils";
 
 async function exportCardToBlob(element: HTMLElement): Promise<Blob> {
-  await prepareShareCardImages(element);
+  await waitForShareCardImages(element);
 
-  const dataUrl = await toPng(element, {
+  const blob = await toBlob(element, {
     width: DIARY_SHARE_CARD_WIDTH,
     height: DIARY_SHARE_CARD_HEIGHT,
     pixelRatio: 1,
-    cacheBust: true,
   });
 
-  const response = await fetch(dataUrl);
-  return response.blob();
+  if (!blob) {
+    throw new Error("No se pudo generar la imagen.");
+  }
+
+  return blob;
 }
 
 export function useDiaryShare() {
@@ -32,12 +34,12 @@ export function useDiaryShare() {
     async (element: HTMLElement | null, dateKey: string) => {
       if (!element) return;
 
+      const filename = buildShareFilename(dateKey);
       setIsSharing(true);
+
       try {
         const blob = await exportCardToBlob(element);
-        const file = new File([blob], buildShareFilename(dateKey), {
-          type: "image/png",
-        });
+        const file = new File([blob], filename, { type: "image/png" });
 
         if (
           typeof navigator !== "undefined" &&
@@ -56,7 +58,7 @@ export function useDiaryShare() {
           }
         }
 
-        downloadBlob(blob, buildShareFilename(dateKey));
+        downloadBlob(blob, filename);
       } catch {
         toast.error("No se pudo generar la imagen.", {
           id: "diary-share-error",
@@ -72,10 +74,12 @@ export function useDiaryShare() {
     async (element: HTMLElement | null, dateKey: string) => {
       if (!element) return;
 
+      const filename = buildShareFilename(dateKey);
       setIsDownloading(true);
+
       try {
         const blob = await exportCardToBlob(element);
-        downloadBlob(blob, buildShareFilename(dateKey));
+        downloadBlob(blob, filename);
       } catch {
         toast.error("No se pudo generar la imagen.", {
           id: "diary-share-error",
