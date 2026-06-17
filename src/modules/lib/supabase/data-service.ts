@@ -97,6 +97,25 @@ export async function getDiaryEntriesByUserId(
   return data ?? [];
 }
 
+export async function getDiaryEntryByUserIdAndDate(
+  userId: string,
+  date: string,
+): Promise<DiaryEntry | null> {
+  const { data, error } = await supabase
+    .from("diary_entries")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("date", date)
+    .maybeSingle();
+
+  if (error) {
+    console.error(error);
+    throw new Error("No se pudo cargar el registro del diario.");
+  }
+
+  return data;
+}
+
 export async function createDiaryEntry(entry: DiaryEntryInsert) {
   const { data, error } = await supabase
     .from("diary_entries")

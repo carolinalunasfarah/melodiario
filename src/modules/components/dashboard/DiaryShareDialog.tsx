@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { createPortal } from "react-dom";
+import { useState, useSyncExternalStore } from "react";
 import { DownloadIcon, Share2Icon } from "lucide-react";
 import type { DiaryEntry } from "@/src/modules/lib/supabase/types";
 import { toDateKey } from "@/src/modules/utils";
@@ -41,16 +40,8 @@ export default function DiaryShareDialog({
   disabled = false,
 }: DiaryShareDialogProps) {
   const [open, setOpen] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
-  const {
-    isDownloading,
-    isSharing,
-    isPreparingExport,
-    clearExportCache,
-    prepareExport,
-    exportAndShare,
-    exportAndDownload,
-  } = useDiaryShare();
+  const { isDownloading, isSharing, exportAndShare, exportAndDownload } =
+    useDiaryShare();
   const dateKey = toDateKey(selectedDate);
   const isDesktop = useSyncExternalStore(
     subscribeToDesktopMediaQuery,
@@ -63,55 +54,15 @@ export default function DiaryShareDialog({
     () => false,
   );
   const showShareButton = canShareFiles && !isDesktop;
+  const isBusy = isDownloading || isSharing;
 
   function handleShare() {
-    void exportAndShare(cardRef.current, dateKey);
+    void exportAndShare(dateKey);
   }
 
   function handleDownload() {
-    void exportAndDownload(cardRef.current, dateKey);
+    void exportAndDownload(dateKey);
   }
-
-  const isBusy = isDownloading || isSharing || isPreparingExport;
-
-  useEffect(() => {
-    if (!open) {
-      clearExportCache();
-      return;
-    }
-
-    let cancelled = false;
-    const timer = window.setTimeout(() => {
-      if (cancelled) return;
-      void prepareExport(cardRef.current, dateKey);
-    }, 400);
-
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timer);
-    };
-  }, [open, dateKey, entry, clearExportCache, prepareExport]);
-
-  const isExportReady = !isPreparingExport;
-
-  const exportCard = (
-    <div
-      aria-hidden
-      className="pointer-events-none fixed top-0 z-[-1]"
-      style={{
-        left: -10_000,
-        width: DIARY_SHARE_CARD_WIDTH,
-        height: DIARY_SHARE_CARD_HEIGHT,
-      }}
-    >
-      <DiaryShareCard
-        ref={cardRef}
-        entry={entry}
-        selectedDate={selectedDate}
-        forExport
-      />
-    </div>
-  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -161,26 +112,18 @@ export default function DiaryShareDialog({
                   type="button"
                   variant="outline"
                   className="flex-1"
-                  disabled={!isExportReady || isDownloading}
+                  disabled={isBusy}
                   onClick={handleDownload}
                 >
-                  {isPreparingExport
-                    ? "Preparando..."
-                    : isDownloading
-                      ? "Descargando..."
-                      : "Descargar"}
+                  {isDownloading ? "Descargando..." : "Descargar"}
                 </Button>
                 <Button
                   type="button"
                   className="flex-1"
-                  disabled={!isExportReady || isSharing}
+                  disabled={isBusy}
                   onClick={handleShare}
                 >
-                  {isPreparingExport
-                    ? "Preparando..."
-                    : isSharing
-                      ? "Compartiendo..."
-                      : "Compartir"}
+                  {isSharing ? "Compartiendo..." : "Compartir"}
                 </Button>
               </div>
               <DialogClose asChild>
@@ -209,20 +152,15 @@ export default function DiaryShareDialog({
               <Button
                 type="button"
                 className="flex-1"
-                disabled={!isExportReady || isDownloading}
+                disabled={isBusy}
                 onClick={handleDownload}
               >
-                {isPreparingExport
-                  ? "Preparando..."
-                  : isDownloading
-                    ? "Descargando..."
-                    : "Descargar"}
+                {isDownloading ? "Descargando..." : "Descargar"}
               </Button>
             </div>
           )}
         </div>
       </DialogContent>
-      {open ? createPortal(exportCard, document.body) : null}
     </Dialog>
   );
 }

@@ -18,6 +18,7 @@ export { default as ProfileFormAvatar } from "./ProfileFormAvatar";
 export { default as ProfileFormDeleteUser } from "./ProfileFormDeleteUser";
 export { default as ProfileFormName } from "./ProfileFormName";
 export { default as SupportForm } from "./SupportForm";
+export { DiaryShareOgContent } from "./DiaryShareOgContent";
 
 export * from "./types";
 export * from "./constants";

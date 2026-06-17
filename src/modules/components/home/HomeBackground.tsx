@@ -2,7 +2,7 @@ import {
   BRAND_BACKGROUND_HEX,
   BRAND_SURFACE_HEX,
   MOOD_HEX,
-} from "@/src/modules/components/dashboard/constants";
+} from "@/src/modules/components/home/constants";
 
 const VIEWBOX_WIDTH = 1440;
 const VIEWBOX_HEIGHT = 700;

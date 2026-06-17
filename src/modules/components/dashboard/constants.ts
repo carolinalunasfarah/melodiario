@@ -70,21 +70,10 @@ export const PROFILE_AVATAR_OPTIONS: AvatarOption[] = [
 
 export const DIARY_SHARE_CARD_WIDTH = 1080;
 export const DIARY_SHARE_CARD_HEIGHT = 1350;
+export const DIARY_SHARE_PADDING = 48;
+export const DIARY_SHARE_SECTION_GAP = 40;
 
 export const PREVIEW_WIDTH = 350;
 export const PREVIEW_SCALE = PREVIEW_WIDTH / DIARY_SHARE_CARD_WIDTH;
-
-export const BRAND_BACKGROUND_HEX = "#0a051b";
-export const BRAND_SURFACE_HEX = "#180f33";
-
-export const MOOD_HEX: Record<MoodToken, string> = {
-  happiness: "#fbbf24",
-  sadness: "#60a5fa",
-  surprise: "#fb923c",
-  disgust: "#d8b4fe",
-  rage: "#fca5a5",
-  anxiety: "#86efac",
-  neutral: "#94a3b8",
-};
 
 export const DESKTOP_MEDIA_QUERY = "(min-width: 1024px)";

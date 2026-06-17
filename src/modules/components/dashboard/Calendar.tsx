@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { parse } from "date-fns";
-import { DayPicker } from "react-day-picker";
+import { DayPicker, type DayButtonProps } from "react-day-picker";
 import { es } from "react-day-picker/locale";
 import "@daypicker/react/style.css";
 import type { DiaryEntry } from "@/src/modules/lib/supabase/types";
@@ -30,6 +30,31 @@ export default function Calendar({
   const entryDates = useMemo(
     () => entries.map((entry) => parse(entry.date, "yyyy-MM-dd", new Date())),
     [entries],
+  );
+
+  const components = useMemo(
+    () => ({
+      MonthCaption: CalendarNavigation,
+      DayButton: function DayButton({
+        day,
+        modifiers,
+        ...props
+      }: DayButtonProps) {
+        return (
+          <CalendarDayButton
+            modifiers={modifiers}
+            albumCover={
+              entriesByDate.get(toDateKey(day.date))?.spotify_song_album_cover
+            }
+            className={props.className ?? ""}
+            {...props}
+          >
+            {day.date.getDate()}
+          </CalendarDayButton>
+        );
+      },
+    }),
+    [entriesByDate],
   );
 
   return (
@@ -65,21 +90,7 @@ export default function Calendar({
           ),
           disabled: "[&>button]:pointer-events-none [&>button]:opacity-35",
         }}
-        components={{
-          MonthCaption: CalendarNavigation,
-          DayButton: ({ day, modifiers, ...props }) => (
-            <CalendarDayButton
-              modifiers={modifiers}
-              albumCover={
-                entriesByDate.get(toDateKey(day.date))?.spotify_song_album_cover
-              }
-              className={props.className ?? ""}
-              {...props}
-            >
-              {day.date.getDate()}
-            </CalendarDayButton>
-          ),
-        }}
+        components={components}
       />
     </div>
   );

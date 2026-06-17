@@ -7,6 +7,7 @@ import {
   Turntable,
 } from "@/src/modules/components/avatars";
 import type { RingAvatarItem } from "./types";
+import { MoodToken } from "../dashboard/types";
 
 export const RING_RADIUS = 118;
 export const AVATAR_SIZE = 60;
@@ -78,3 +79,16 @@ export const STEPS = [
       "Descarga y comparte tu postal diaria, podrás hacerlo donde quieras, con quien quieras y cuando quieras.",
   },
 ] as const;
+
+export const BRAND_BACKGROUND_HEX = "#0a051b";
+export const BRAND_SURFACE_HEX = "#180f33";
+
+export const MOOD_HEX: Record<MoodToken, string> = {
+  happiness: "#fbbf24",
+  sadness: "#60a5fa",
+  surprise: "#fb923c",
+  disgust: "#d8b4fe",
+  rage: "#fca5a5",
+  anxiety: "#86efac",
+  neutral: "#94a3b8",
+};

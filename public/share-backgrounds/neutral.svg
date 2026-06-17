@@ -1,0 +1,36 @@
+<svg
+  viewBox="0 0 1440 700"
+  preserveAspectRatio="none"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-hidden="true"
+>
+  <defs>
+    <linearGradient id="neutral-wave-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#373454" />
+      <stop offset="100%" stop-color="#94a3b8" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1440" height="700" fill="#0a051b" />
+
+  <path
+    d="M 0,700 L 0,105 C 205.71428571428572,135 822.8571428571429,120 1440,105 L 1440,700 L 0,700 Z"
+    fill="url(#neutral-wave-gradient)"
+    fill-opacity="0.265"
+  />
+  <path
+    d="M 0,700 L 0,245 C 205.71428571428572,315 822.8571428571429,280 1440,245 L 1440,700 L 0,700 Z"
+    fill="url(#neutral-wave-gradient)"
+    fill-opacity="0.4"
+  />
+  <path
+    d="M 0,700 L 0,385 C 205.71428571428572,495 822.8571428571429,440 1440,385 L 1440,700 L 0,700 Z"
+    fill="url(#neutral-wave-gradient)"
+    fill-opacity="0.53"
+  />
+  <path
+    d="M 0,700 L 0,525 C 205.71428571428572,675 822.8571428571429,600 1440,525 L 1440,700 L 0,700 Z"
+    fill="url(#neutral-wave-gradient)"
+    fill-opacity="1"
+  />
+</svg>

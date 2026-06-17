@@ -51,7 +51,7 @@ export default function TermsDialog({ open, onOpenChange }: TermsDialogProps) {
               )}
             >
               <Image
-                src="/linkedin-logo.svg"
+                src="/linkedin_logo.svg"
                 alt="LinkedIn logo"
                 width={30}
                 height={30}

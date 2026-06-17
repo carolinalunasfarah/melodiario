@@ -6,6 +6,8 @@ import { Modifiers } from "@daypicker/react";
 import { cn } from "@/src/modules/utils/styles";
 import { Button, Skeleton } from "@/src/modules/components/ui";
 
+const loadedAlbumCovers = new Set<string>();
+
 export default function CalendarDayButton({
   children,
   modifiers,
@@ -18,8 +20,19 @@ export default function CalendarDayButton({
   albumCover?: string;
   className: string;
 }) {
-  const [imageLoaded, setImageLoaded] = useState(false);
   const showAlbumCover = Boolean(albumCover && !modifiers.outside);
+  const isCoverCached = Boolean(
+    albumCover && loadedAlbumCovers.has(albumCover),
+  );
+  const [imageLoaded, setImageLoaded] = useState(isCoverCached);
+  const coverVisible = isCoverCached || imageLoaded;
+
+  function handleImageLoad() {
+    if (albumCover) {
+      loadedAlbumCovers.add(albumCover);
+    }
+    setImageLoaded(true);
+  }
 
   return (
     <Button
@@ -39,7 +52,7 @@ export default function CalendarDayButton({
     >
       {showAlbumCover ? (
         <>
-          {!imageLoaded ? (
+          {!coverVisible ? (
             <Skeleton className="absolute inset-0 rounded-[inherit]" />
           ) : null}
           <Image
@@ -48,11 +61,13 @@ export default function CalendarDayButton({
             fill
             sizes="(max-width: 640px) 40px, 88px"
             className={cn(
-              "object-cover transition-opacity duration-300",
-              imageLoaded ? "opacity-100" : "opacity-0",
+              "object-cover",
+              coverVisible
+                ? "opacity-100"
+                : "opacity-0 transition-opacity duration-300",
             )}
             loading="eager"
-            onLoad={() => setImageLoaded(true)}
+            onLoad={handleImageLoad}
           />
         </>
       ) : null}
