@@ -70,7 +70,7 @@ export default function DiaryShareDialog({
   const exportCard = (
     <div
       aria-hidden
-      className="pointer-events-none fixed top-0 -z-[1]"
+      className="pointer-events-none fixed top-0 z-[-1]"
       style={{
         left: -10_000,
         width: DIARY_SHARE_CARD_WIDTH,
