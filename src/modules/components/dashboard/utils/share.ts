@@ -36,6 +36,44 @@ export function getProxiedImageUrl(imageUrl: string): string {
   return `/api/proxy-image?url=${encodeURIComponent(imageUrl)}`;
 }
 
+function appendCacheBust(url: string): string {
+  if (url.startsWith("data:")) {
+    return url;
+  }
+
+  const separator = url.includes("?") ? "&" : "?";
+  return `${url}${separator}cacheBust=${Date.now()}`;
+}
+
+function resolveImageFetchUrl(src: string): string {
+  if (src.startsWith("data:")) {
+    return src;
+  }
+
+  if (src.startsWith("/")) {
+    return `${window.location.origin}${src}`;
+  }
+
+  return src;
+}
+
+function blobToDataUrl(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (typeof reader.result === "string") {
+        resolve(reader.result);
+        return;
+      }
+
+      reject(new Error("No se pudo convertir la imagen."));
+    };
+    reader.onerror = () =>
+      reject(new Error("No se pudo convertir la imagen."));
+    reader.readAsDataURL(blob);
+  });
+}
+
 function waitForImage(img: HTMLImageElement): Promise<void> {
   if (img.complete && img.naturalWidth > 0) {
     return Promise.resolve();
@@ -51,9 +89,41 @@ function waitForImage(img: HTMLImageElement): Promise<void> {
   });
 }
 
-export async function waitForShareCardImages(element: HTMLElement): Promise<void> {
+async function inlineImage(img: HTMLImageElement): Promise<void> {
+  const src = img.getAttribute("src");
+
+  if (!src || src.startsWith("data:")) {
+    img.style.opacity = "1";
+    await waitForImage(img);
+    return;
+  }
+
+  const fetchUrl = appendCacheBust(resolveImageFetchUrl(src));
+
+  if (src.startsWith("http://") || src.startsWith("https://")) {
+    img.crossOrigin = "anonymous";
+  }
+
+  const response = await fetch(fetchUrl);
+  if (!response.ok) {
+    throw new Error("No se pudo cargar una imagen de la tarjeta.");
+  }
+
+  const blob = await response.blob();
+  const dataUrl = await blobToDataUrl(blob);
+  img.src = dataUrl;
+  img.style.opacity = "1";
+  await waitForImage(img);
+}
+
+export function areShareCardImagesReady(element: HTMLElement): boolean {
+  const images = Array.from(element.querySelectorAll("img"));
+  return images.length > 0 && images.every((img) => img.naturalWidth > 0);
+}
+
+export async function prepareShareCardImages(element: HTMLElement): Promise<void> {
   await Promise.all(
-    Array.from(element.querySelectorAll("img"), (img) => waitForImage(img)),
+    Array.from(element.querySelectorAll("img"), (img) => inlineImage(img)),
   );
 }
 

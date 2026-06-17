@@ -13,24 +13,30 @@ import { getProxiedImageUrl } from "./utils/share";
 type DiaryShareCardProps = {
   entry: DiaryEntry;
   selectedDate: Date;
+  forExport?: boolean;
 };
 
 const DiaryShareCard = forwardRef<HTMLDivElement, DiaryShareCardProps>(
-  function DiaryShareCard({ entry, selectedDate }, ref) {
+  function DiaryShareCard({ entry, selectedDate, forExport = false }, ref) {
     const proxiedCoverUrl = entry.spotify_song_album_cover
       ? getProxiedImageUrl(entry.spotify_song_album_cover)
       : null;
-    const [coverLoaded, setCoverLoaded] = useState(false);
+    const [coverLoaded, setCoverLoaded] = useState(forExport);
     const coverRef = useRef<HTMLImageElement>(null);
+    const coverVisible = forExport || coverLoaded;
 
     useEffect(() => {
+      if (forExport) {
+        return;
+      }
+
       setCoverLoaded(false);
 
       const image = coverRef.current;
       if (image?.complete && image.naturalWidth > 0) {
         setCoverLoaded(true);
       }
-    }, [proxiedCoverUrl]);
+    }, [forExport, proxiedCoverUrl]);
 
     return (
       <div
@@ -68,7 +74,7 @@ const DiaryShareCard = forwardRef<HTMLDivElement, DiaryShareCardProps>(
           <div className="relative mb-6 aspect-square w-full overflow-hidden rounded-2xl bg-brand-background/45">
             {proxiedCoverUrl ? (
               <>
-                {!coverLoaded ? (
+                {!forExport && !coverLoaded ? (
                   <Skeleton className="absolute inset-0 rounded-2xl bg-brand-background/60" />
                 ) : null}
                 <img
@@ -76,9 +82,10 @@ const DiaryShareCard = forwardRef<HTMLDivElement, DiaryShareCardProps>(
                   src={proxiedCoverUrl}
                   alt={`Carátula de ${entry.spotify_song_title}`}
                   onLoad={() => setCoverLoaded(true)}
+                  crossOrigin="anonymous"
                   className={cn(
                     "size-full rounded-2xl object-cover transition-opacity duration-300",
-                    coverLoaded ? "opacity-100" : "opacity-0",
+                    coverVisible ? "opacity-100" : "opacity-0",
                   )}
                 />
               </>
@@ -92,6 +99,7 @@ const DiaryShareCard = forwardRef<HTMLDivElement, DiaryShareCardProps>(
                 alt="Spotify black logo"
                 width={36}
                 height={36}
+                crossOrigin="anonymous"
               />
               <span>Spotify</span>
             </div>
@@ -103,6 +111,7 @@ const DiaryShareCard = forwardRef<HTMLDivElement, DiaryShareCardProps>(
                 alt="Melodiario logo"
                 width={36}
                 height={36}
+                crossOrigin="anonymous"
                 className="rounded-lg object-cover"
               />
             </div>

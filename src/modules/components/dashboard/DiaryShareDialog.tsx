@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import { DownloadIcon, Share2Icon } from "lucide-react";
 import type { DiaryEntry } from "@/src/modules/lib/supabase/types";
 import { toDateKey } from "@/src/modules/utils";
@@ -66,6 +67,25 @@ export default function DiaryShareDialog({
 
   const isBusy = isDownloading || isSharing;
 
+  const exportCard = (
+    <div
+      aria-hidden
+      className="pointer-events-none fixed top-0 -z-[1]"
+      style={{
+        left: -10_000,
+        width: DIARY_SHARE_CARD_WIDTH,
+        height: DIARY_SHARE_CARD_HEIGHT,
+      }}
+    >
+      <DiaryShareCard
+        ref={cardRef}
+        entry={entry}
+        selectedDate={selectedDate}
+        forExport
+      />
+    </div>
+  );
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -104,17 +124,6 @@ export default function DiaryShareDialog({
           >
             <DiaryShareCard entry={entry} selectedDate={selectedDate} />
           </div>
-        </div>
-
-        <div
-          aria-hidden
-          className="pointer-events-none fixed top-0 left-[-9999px] opacity-0"
-        >
-          <DiaryShareCard
-            ref={cardRef}
-            entry={entry}
-            selectedDate={selectedDate}
-          />
         </div>
 
         <div className="flex flex-col gap-2">
@@ -174,6 +183,7 @@ export default function DiaryShareDialog({
           )}
         </div>
       </DialogContent>
+      {open ? createPortal(exportCard, document.body) : null}
     </Dialog>
   );
 }

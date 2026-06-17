@@ -5,25 +5,54 @@ import { toBlob } from "html-to-image";
 import { toast } from "sonner";
 import { DIARY_SHARE_CARD_HEIGHT, DIARY_SHARE_CARD_WIDTH } from "../constants";
 import {
+  areShareCardImagesReady,
   buildShareFilename,
   downloadBlob,
-  waitForShareCardImages,
+  prepareShareCardImages,
 } from "../utils";
 
+const EXPORT_MAX_ATTEMPTS = 3;
+const EXPORT_RETRY_DELAY_MS = 200;
+const MIN_EXPORT_BLOB_SIZE = 10_000;
+
 async function exportCardToBlob(element: HTMLElement): Promise<Blob> {
-  await waitForShareCardImages(element);
+  let lastError: unknown;
 
-  const blob = await toBlob(element, {
-    width: DIARY_SHARE_CARD_WIDTH,
-    height: DIARY_SHARE_CARD_HEIGHT,
-    pixelRatio: 1,
-  });
+  for (let attempt = 0; attempt < EXPORT_MAX_ATTEMPTS; attempt += 1) {
+    if (attempt > 0) {
+      await new Promise((resolve) => setTimeout(resolve, EXPORT_RETRY_DELAY_MS));
+    }
 
-  if (!blob) {
-    throw new Error("No se pudo generar la imagen.");
+    try {
+      await prepareShareCardImages(element);
+
+      if (!areShareCardImagesReady(element) && attempt < EXPORT_MAX_ATTEMPTS - 1) {
+        continue;
+      }
+
+      const blob = await toBlob(element, {
+        width: DIARY_SHARE_CARD_WIDTH,
+        height: DIARY_SHARE_CARD_HEIGHT,
+        pixelRatio: 1,
+        cacheBust: true,
+      });
+
+      if (blob && blob.size >= MIN_EXPORT_BLOB_SIZE) {
+        return blob;
+      }
+    } catch (error) {
+      lastError = error;
+      if (attempt === EXPORT_MAX_ATTEMPTS - 1) {
+        break;
+      }
+    }
   }
 
-  return blob;
+  if (lastError instanceof Error) {
+    throw lastError;
+  }
+
+  throw new Error("No se pudo generar la imagen.");
 }
 
 export function useDiaryShare() {
