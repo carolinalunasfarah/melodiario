@@ -1,3 +1,6 @@
+"use client";
+
+import { useId } from "react";
 import type { MoodToken } from "./types";
 import { BRAND_BACKGROUND_HEX, MOOD_HEX } from "./constants";
 import { getMoodShareMutedHex } from "./utils";
@@ -26,13 +29,15 @@ const MOOD_WAVE_OPACITY = {
 export default function DiaryShareBackground({
   mood,
 }: DiaryShareBackgroundProps) {
+  const instanceId = `uid${useId().replace(/:/g, "")}`;
   const moodColor = MOOD_HEX[mood];
   const mutedColor = getMoodShareMutedHex(mood);
-  const mutedGradientId = `share-muted-${mood}`;
-  const blendGradientId = `share-blend-${mood}`;
+  const mutedGradientId = `share-muted-${mood}-${instanceId}`;
+  const blendGradientId = `share-blend-${mood}-${instanceId}`;
 
   return (
     <svg
+      data-share-background
       aria-hidden
       viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
       preserveAspectRatio="none"
