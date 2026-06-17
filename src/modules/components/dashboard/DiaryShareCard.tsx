@@ -47,7 +47,7 @@ const DiaryShareCard = forwardRef<HTMLDivElement, DiaryShareCardProps>(
           height: DIARY_SHARE_CARD_HEIGHT,
         }}
       >
-        <DiaryShareBackground mood={entry.mood} />
+        <DiaryShareBackground mood={entry.mood} forExport={forExport} />
 
         <div className="relative flex h-full flex-col p-12">
           <div className="mb-12">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { DownloadIcon, Share2Icon } from "lucide-react";
 import type { DiaryEntry } from "@/src/modules/lib/supabase/types";
@@ -42,8 +42,15 @@ export default function DiaryShareDialog({
 }: DiaryShareDialogProps) {
   const [open, setOpen] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-  const { isDownloading, isSharing, exportAndShare, exportAndDownload } =
-    useDiaryShare();
+  const {
+    isDownloading,
+    isSharing,
+    isPreparingExport,
+    clearExportCache,
+    prepareExport,
+    exportAndShare,
+    exportAndDownload,
+  } = useDiaryShare();
   const dateKey = toDateKey(selectedDate);
   const isDesktop = useSyncExternalStore(
     subscribeToDesktopMediaQuery,
@@ -65,7 +72,27 @@ export default function DiaryShareDialog({
     void exportAndDownload(cardRef.current, dateKey);
   }
 
-  const isBusy = isDownloading || isSharing;
+  const isBusy = isDownloading || isSharing || isPreparingExport;
+
+  useEffect(() => {
+    if (!open) {
+      clearExportCache();
+      return;
+    }
+
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      if (cancelled) return;
+      void prepareExport(cardRef.current, dateKey);
+    }, 400);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [open, dateKey, entry, clearExportCache, prepareExport]);
+
+  const isExportReady = !isPreparingExport;
 
   const exportCard = (
     <div
@@ -134,18 +161,26 @@ export default function DiaryShareDialog({
                   type="button"
                   variant="outline"
                   className="flex-1"
-                  disabled={isDownloading}
+                  disabled={!isExportReady || isDownloading}
                   onClick={handleDownload}
                 >
-                  {isDownloading ? "Descargando..." : "Descargar"}
+                  {isPreparingExport
+                    ? "Preparando..."
+                    : isDownloading
+                      ? "Descargando..."
+                      : "Descargar"}
                 </Button>
                 <Button
                   type="button"
                   className="flex-1"
-                  disabled={isSharing}
+                  disabled={!isExportReady || isSharing}
                   onClick={handleShare}
                 >
-                  {isSharing ? "Compartiendo..." : "Compartir"}
+                  {isPreparingExport
+                    ? "Preparando..."
+                    : isSharing
+                      ? "Compartiendo..."
+                      : "Compartir"}
                 </Button>
               </div>
               <DialogClose asChild>
@@ -174,10 +209,14 @@ export default function DiaryShareDialog({
               <Button
                 type="button"
                 className="flex-1"
-                disabled={isDownloading}
+                disabled={!isExportReady || isDownloading}
                 onClick={handleDownload}
               >
-                {isDownloading ? "Descargando..." : "Descargar"}
+                {isPreparingExport
+                  ? "Preparando..."
+                  : isDownloading
+                    ? "Descargando..."
+                    : "Descargar"}
               </Button>
             </div>
           )}

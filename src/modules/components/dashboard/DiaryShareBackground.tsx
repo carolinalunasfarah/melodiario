@@ -7,6 +7,7 @@ import { getMoodShareMutedHex } from "./utils";
 
 type DiaryShareBackgroundProps = {
   mood: MoodToken;
+  forExport?: boolean;
 };
 
 const VIEWBOX_WIDTH = 1440;
@@ -28,12 +29,19 @@ const MOOD_WAVE_OPACITY = {
 
 export default function DiaryShareBackground({
   mood,
+  forExport = false,
 }: DiaryShareBackgroundProps) {
   const instanceId = `uid${useId().replace(/:/g, "")}`;
   const moodColor = MOOD_HEX[mood];
   const mutedColor = getMoodShareMutedHex(mood);
   const mutedGradientId = `share-muted-${mood}-${instanceId}`;
   const blendGradientId = `share-blend-${mood}-${instanceId}`;
+  const blendStops = forExport
+    ? { mid: "0.28", strong: "0.55", full: "0.85" }
+    : { mid: "0.18", strong: "0.38", full: "0.72" };
+  const mutedStops = forExport
+    ? { mid: "0.48", full: "0.9" }
+    : { mid: "0.32", full: "0.78" };
 
   return (
     <svg
@@ -54,9 +62,9 @@ export default function DiaryShareBackground({
           y2={VIEWBOX_HEIGHT}
         >
           <stop offset="0%" stopColor={moodColor} stopOpacity="0" />
-          <stop offset="35%" stopColor={moodColor} stopOpacity="0.18" />
-          <stop offset="65%" stopColor={mutedColor} stopOpacity="0.38" />
-          <stop offset="100%" stopColor={mutedColor} stopOpacity="0.72" />
+          <stop offset="35%" stopColor={moodColor} stopOpacity={blendStops.mid} />
+          <stop offset="65%" stopColor={mutedColor} stopOpacity={blendStops.strong} />
+          <stop offset="100%" stopColor={mutedColor} stopOpacity={blendStops.full} />
         </linearGradient>
 
         <linearGradient
@@ -68,8 +76,8 @@ export default function DiaryShareBackground({
           y2={VIEWBOX_HEIGHT}
         >
           <stop offset="0%" stopColor={mutedColor} stopOpacity="0" />
-          <stop offset="40%" stopColor={mutedColor} stopOpacity="0.32" />
-          <stop offset="100%" stopColor={mutedColor} stopOpacity="0.78" />
+          <stop offset="40%" stopColor={mutedColor} stopOpacity={mutedStops.mid} />
+          <stop offset="100%" stopColor={mutedColor} stopOpacity={mutedStops.full} />
         </linearGradient>
       </defs>
 
@@ -90,10 +98,17 @@ export default function DiaryShareBackground({
         fillOpacity={MOOD_WAVE_OPACITY.mid}
       />
 
-      <g style={{ mixBlendMode: "screen" }}>
-        <path d={WAVE_PATHS.frontMid} fill={`url(#${blendGradientId})`} />
-        <path d={WAVE_PATHS.front} fill={`url(#${mutedGradientId})`} />
-      </g>
+      {forExport ? (
+        <>
+          <path d={WAVE_PATHS.frontMid} fill={`url(#${blendGradientId})`} />
+          <path d={WAVE_PATHS.front} fill={`url(#${mutedGradientId})`} />
+        </>
+      ) : (
+        <g style={{ mixBlendMode: "screen" }}>
+          <path d={WAVE_PATHS.frontMid} fill={`url(#${blendGradientId})`} />
+          <path d={WAVE_PATHS.front} fill={`url(#${mutedGradientId})`} />
+        </g>
+      )}
     </svg>
   );
 }

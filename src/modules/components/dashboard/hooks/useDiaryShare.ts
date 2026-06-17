@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { toBlob } from "html-to-image";
 import { toast } from "sonner";
 import { DIARY_SHARE_CARD_HEIGHT, DIARY_SHARE_CARD_WIDTH } from "../constants";
@@ -55,9 +55,57 @@ async function exportCardToBlob(element: HTMLElement): Promise<Blob> {
   throw new Error("No se pudo generar la imagen.");
 }
 
+function buildShareFile(blob: Blob, filename: string): File {
+  const bytes = blob.slice(0, blob.size, blob.type || "image/png");
+  return new File([bytes], filename, {
+    type: "image/png",
+    lastModified: Date.now(),
+  });
+}
+
 export function useDiaryShare() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const [isPreparingExport, setIsPreparingExport] = useState(false);
+  const exportCacheRef = useRef<{ dateKey: string; blob: Blob } | null>(null);
+
+  const clearExportCache = useCallback(() => {
+    exportCacheRef.current = null;
+  }, []);
+
+  const getExportBlob = useCallback(
+    async (element: HTMLElement | null, dateKey: string, force = false) => {
+      if (!element) {
+        throw new Error("No se encontró la tarjeta para exportar.");
+      }
+
+      if (!force && exportCacheRef.current?.dateKey === dateKey) {
+        return exportCacheRef.current.blob;
+      }
+
+      const blob = await exportCardToBlob(element);
+      exportCacheRef.current = { dateKey, blob };
+      return blob;
+    },
+    [],
+  );
+
+  const prepareExport = useCallback(
+    async (element: HTMLElement | null, dateKey: string) => {
+      if (!element) return;
+
+      setIsPreparingExport(true);
+
+      try {
+        await getExportBlob(element, dateKey, true);
+      } catch {
+        exportCacheRef.current = null;
+      } finally {
+        setIsPreparingExport(false);
+      }
+    },
+    [getExportBlob],
+  );
 
   const exportAndShare = useCallback(
     async (element: HTMLElement | null, dateKey: string) => {
@@ -67,8 +115,8 @@ export function useDiaryShare() {
       setIsSharing(true);
 
       try {
-        const blob = await exportCardToBlob(element);
-        const file = new File([blob], filename, { type: "image/png" });
+        const blob = await getExportBlob(element, dateKey);
+        const file = buildShareFile(blob, filename);
 
         if (
           typeof navigator !== "undefined" &&
@@ -76,10 +124,7 @@ export function useDiaryShare() {
           navigator.canShare?.({ files: [file] })
         ) {
           try {
-            await navigator.share({
-              files: [file],
-              title: "Mi día en Melodiario",
-            });
+            await navigator.share({ files: [file] });
             return;
           } catch (error) {
             if ((error as Error).name === "AbortError") return;
@@ -96,7 +141,7 @@ export function useDiaryShare() {
         setIsSharing(false);
       }
     },
-    [],
+    [getExportBlob],
   );
 
   const exportAndDownload = useCallback(
@@ -107,7 +152,7 @@ export function useDiaryShare() {
       setIsDownloading(true);
 
       try {
-        const blob = await exportCardToBlob(element);
+        const blob = await getExportBlob(element, dateKey);
         downloadBlob(blob, filename);
       } catch {
         toast.error("No se pudo generar la imagen.", {
@@ -117,8 +162,16 @@ export function useDiaryShare() {
         setIsDownloading(false);
       }
     },
-    [],
+    [getExportBlob],
   );
 
-  return { isDownloading, isSharing, exportAndShare, exportAndDownload };
+  return {
+    isDownloading,
+    isSharing,
+    isPreparingExport,
+    clearExportCache,
+    prepareExport,
+    exportAndShare,
+    exportAndDownload,
+  };
 }
