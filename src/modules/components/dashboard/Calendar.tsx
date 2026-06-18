@@ -14,13 +14,19 @@ import {
 } from "@/src/modules/components/dashboard";
 
 export default function Calendar({
+  month,
   selected,
   onSelect,
+  onMonthChange,
   entries = [],
+  isLoading = false,
 }: {
+  month: Date;
   selected?: Date;
   onSelect?: (date: Date | undefined) => void;
+  onMonthChange?: (month: Date) => void;
   entries?: DiaryEntry[];
+  isLoading?: boolean;
 }) {
   const entriesByDate = useMemo(
     () => new Map(entries.map((entry) => [entry.date, entry])),
@@ -58,13 +64,20 @@ export default function Calendar({
   );
 
   return (
-    <div>
+    <div
+      className={cn(
+        "relative transition-opacity duration-200",
+        isLoading && "pointer-events-none opacity-60",
+      )}
+    >
       <DayPicker
         locale={es}
         weekStartsOn={1}
         lang="es"
         hideNavigation
         mode="single"
+        month={month}
+        onMonthChange={onMonthChange}
         selected={selected}
         onSelect={onSelect}
         modifiers={{ hasEntry: entryDates }}

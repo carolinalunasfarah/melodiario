@@ -1,12 +1,14 @@
+import { startOfMonth } from "date-fns";
 import {
   DashboardContent,
   DashboardUserMenu,
 } from "@/src/modules/components/dashboard";
 import { auth } from "@/src/modules/lib/auth/auth";
 import {
-  getDiaryEntriesByUserId,
+  getDiaryEntriesByUserIdForMonth,
   getUserById,
 } from "@/src/modules/lib/supabase/data-service";
+import { toMonthKey } from "@/src/modules/utils";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -21,9 +23,11 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const [user, entries] = await Promise.all([
+  const initialMonthKey = toMonthKey(startOfMonth(new Date()));
+
+  const [user, initialEntries] = await Promise.all([
     getUserById(session.user.id),
-    getDiaryEntriesByUserId(session.user.id),
+    getDiaryEntriesByUserIdForMonth(session.user.id, initialMonthKey),
   ]);
 
   if (!user) {
@@ -38,7 +42,10 @@ export default async function DashboardPage() {
         </h1>
         <DashboardUserMenu user={user} sessionImage={session.user.image} />
       </div>
-      <DashboardContent entries={entries} />
+      <DashboardContent
+        initialMonthKey={initialMonthKey}
+        initialEntries={initialEntries}
+      />
     </div>
   );
 }

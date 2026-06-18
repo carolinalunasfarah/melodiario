@@ -6,7 +6,7 @@ import { auth, signIn, signOut } from "./auth";
 import { hashPassword } from "./password";
 import { buildProfileUpdate, getProfileUpdateError } from "./profileForm";
 import { LOGIN_FORM_ERRORS } from "./loginErrors";
-import { isValidEmail } from "@/src/modules/utils";
+import { isValidEmail, isValidMonthKey } from "@/src/modules/utils";
 import { getDiaryUpdateError } from "./diaryForm";
 import type {
   DiaryEntryUpdatePayload,
@@ -17,6 +17,7 @@ import type {
 import type {
   WritableDiaryEntryFields,
   DiaryEntryInsert,
+  DiaryEntry,
 } from "@/src/modules/lib/supabase/types";
 import {
   createUser,
@@ -26,6 +27,7 @@ import {
   createDiaryEntry as createDiaryEntryService,
   updateDiaryEntryById,
   deleteUserById,
+  getDiaryEntriesByUserIdForMonth,
 } from "@/src/modules/lib/supabase/data-service";
 
 export async function signInWithGoogle() {
@@ -181,6 +183,22 @@ export async function deleteUser() {
   }
 
   await signOut({ redirectTo: "/" });
+}
+
+export async function getDiaryEntriesForMonth(
+  monthKey: string,
+): Promise<DiaryEntry[]> {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    throw new Error("Debes tener una sesión activa para ver tus registros.");
+  }
+
+  if (!isValidMonthKey(monthKey)) {
+    throw new Error("El mes indicado no es válido.");
+  }
+
+  return getDiaryEntriesByUserIdForMonth(session.user.id, monthKey);
 }
 
 export async function updateDiaryEntry(

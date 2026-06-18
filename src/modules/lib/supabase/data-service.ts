@@ -1,4 +1,5 @@
 import { supabase } from "./supabase";
+import { getMonthDateRange } from "@/src/modules/utils/date";
 import {
   DiaryEntry,
   DiaryEntryInsert,
@@ -80,13 +81,18 @@ export async function deleteUserById(id: string) {
   }
 }
 
-export async function getDiaryEntriesByUserId(
+export async function getDiaryEntriesByUserIdForMonth(
   userId: string,
+  monthKey: string,
 ): Promise<DiaryEntry[]> {
+  const { startDate, endDate } = getMonthDateRange(monthKey);
+
   const { data, error } = await supabase
     .from("diary_entries")
     .select("*")
     .eq("user_id", userId)
+    .gte("date", startDate)
+    .lte("date", endDate)
     .order("date", { ascending: false });
 
   if (error) {
