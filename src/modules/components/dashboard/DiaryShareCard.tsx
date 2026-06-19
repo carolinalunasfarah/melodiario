@@ -58,11 +58,17 @@ export default function DiaryShareCard({
           </h2>
         </div>
 
-        <div className="shrink-0" style={{ marginBottom: DIARY_SHARE_SECTION_GAP }}>
+        <div
+          className="shrink-0"
+          style={{ marginBottom: DIARY_SHARE_SECTION_GAP }}
+        >
           <p className="mt-0 mb-4 text-3xl font-semibold tracking-[0.08em] uppercase">
             Canción del día
           </p>
-          <p className="m-0 text-2xl leading-[1.15] font-bold">
+          <p
+            className="m-0 line-clamp-5 text-2xl leading-[1.15] font-bold"
+            title={`${entry.spotify_song_title} — ${entry.spotify_song_artist}`}
+          >
             {entry.spotify_song_title} —{" "}
             <span className="font-medium text-brand-text/80">
               {entry.spotify_song_artist}
@@ -70,9 +76,9 @@ export default function DiaryShareCard({
           </p>
         </div>
 
-        <div className="relative min-h-0 w-full flex-1 overflow-hidden rounded-2xl bg-brand-background/45">
+        <div className="relative flex min-h-0 flex-1 items-center justify-center">
           {proxiedCoverUrl ? (
-            <>
+            <div className="relative aspect-square h-full max-w-full overflow-hidden rounded-2xl bg-brand-background/45">
               {!coverLoaded ? (
                 <Skeleton className="absolute inset-0 rounded-2xl bg-brand-background/60" />
               ) : null}
@@ -85,7 +91,7 @@ export default function DiaryShareCard({
                   coverLoaded ? "opacity-100" : "opacity-0",
                 )}
               />
-            </>
+            </div>
           ) : null}
         </div>
 

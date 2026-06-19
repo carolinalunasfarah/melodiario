@@ -119,6 +119,10 @@ export function DiaryShareOgContent({
               color: BRAND_TEXT,
               lineHeight: 1.15,
               fontFamily: "Inter",
+              display: "-webkit-box",
+              WebkitLineClamp: 5,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
             }}
           >
             {`${entry.spotify_song_title} — ${entry.spotify_song_artist}`}
@@ -130,21 +134,32 @@ export function DiaryShareOgContent({
             display: "flex",
             flex: 1,
             minHeight: 0,
-            width: "100%",
-            borderRadius: 16,
-            overflow: "hidden",
-            background: "rgba(10, 5, 27, 0.45)",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <img
-            src={assets.albumCoverSrc}
-            alt=""
+          <div
             style={{
-              width: "100%",
+              display: "flex",
+              position: "relative",
+              aspectRatio: "1 / 1",
               height: "100%",
-              objectFit: "cover",
+              maxWidth: "100%",
+              borderRadius: 16,
+              overflow: "hidden",
+              background: "rgba(10, 5, 27, 0.45)",
             }}
-          />
+          >
+            <img
+              src={assets.albumCoverSrc}
+              alt=""
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              }}
+            />
+          </div>
         </div>
 
         <div
